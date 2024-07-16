@@ -41,6 +41,54 @@ public class SegRoles {
 	@JoinColumn(name="n_session_id", referencedColumnName="n_session_id")
 	SegLogSesion  sessionId;
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getEtiquetaRol() {
+		return etiquetaRol;
+	}
+
+	public void setEtiquetaRol(String etiquetaRol) {
+		this.etiquetaRol = etiquetaRol;
+	}
+
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
+	public SegRoles getRolPadreId() {
+		return rolPadreId;
+	}
+
+	public void setRolPadreId(SegRoles rolPadreId) {
+		this.rolPadreId = rolPadreId;
+	}
+
+	public int getRecActivo() {
+		return recActivo;
+	}
+
+	public void setRecActivo(int recActivo) {
+		this.recActivo = recActivo;
+	}
+
+	public SegLogSesion getSessionId() {
+		return sessionId;
+	}
+
+	public void setSessionId(SegLogSesion sessionId) {
+		this.sessionId = sessionId;
+	}
+
 	
 	
 }

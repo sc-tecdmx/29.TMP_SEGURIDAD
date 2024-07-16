@@ -43,6 +43,54 @@ public class SegUsuarioEstadoUsuario {
 	@JoinColumn(name="n_session_id", referencedColumnName="n_session_id")
 	SegLogSesion  sessionId;
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public SegUsuarios getIdUsuario() {
+		return idUsuario;
+	}
+
+	public void setIdUsuario(SegUsuarios idUsuario) {
+		this.idUsuario = idUsuario;
+	}
+
+	public SegCatEstadoUsuario getIdEstadoUsuario() {
+		return idEstadoUsuario;
+	}
+
+	public void setIdEstadoUsuario(SegCatEstadoUsuario idEstadoUsuario) {
+		this.idEstadoUsuario = idEstadoUsuario;
+	}
+
+	public String getFingerprintDispositivo() {
+		return fingerprintDispositivo;
+	}
+
+	public void setFingerprintDispositivo(String fingerprintDispositivo) {
+		this.fingerprintDispositivo = fingerprintDispositivo;
+	}
+
+	public Date getFechaStatus() {
+		return fechaStatus;
+	}
+
+	public void setFechaStatus(Date fechaStatus) {
+		this.fechaStatus = fechaStatus;
+	}
+
+	public SegLogSesion getSessionId() {
+		return sessionId;
+	}
+
+	public void setSessionId(SegLogSesion sessionId) {
+		this.sessionId = sessionId;
+	}
+
 	
 	
 }

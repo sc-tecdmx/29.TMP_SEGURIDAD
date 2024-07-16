@@ -36,5 +36,39 @@ public class UsuarioSecurityDTO extends User {
         this.idSession = idSession;
         this.sys = sys;
     }
+
+	public Integer getIdUsuario() {
+		return idUsuario;
+	}
+
+	public void setIdUsuario(Integer idUsuario) {
+		this.idUsuario = idUsuario;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getIdSession() {
+		return idSession;
+	}
+
+	public void setIdSession(String idSession) {
+		this.idSession = idSession;
+	}
+
+	public String getSys() {
+		return sys;
+	}
+
+	public void setSys(String sys) {
+		this.sys = sys;
+	}
+    
+    
     
 }

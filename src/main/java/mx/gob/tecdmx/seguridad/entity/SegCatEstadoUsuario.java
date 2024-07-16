@@ -18,9 +18,25 @@ public class SegCatEstadoUsuario {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Basic(optional = false)
 	@Column(name = "n_id_estado_usuario", unique = true)
-	int  n_id_estado_usuario;
+	int  id;
   
 	@Column(name = "s_descripcion")
 	String  descripcion;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
 	
 }

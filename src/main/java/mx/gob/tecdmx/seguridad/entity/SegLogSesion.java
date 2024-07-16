@@ -43,7 +43,53 @@ public class SegLogSesion {
 	@JoinColumn(name="chain_n_session_id", referencedColumnName="n_session_id")
 	SegLogSesion chainSessionId;
 
-	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public SegUsuarios getIdUsuario() {
+		return idUsuario;
+	}
+
+	public void setIdUsuario(SegUsuarios idUsuario) {
+		this.idUsuario = idUsuario;
+	}
+
+	public Date getFechaInicio() {
+		return fechaInicio;
+	}
+
+	public void setFechaInicio(Date fechaInicio) {
+		this.fechaInicio = fechaInicio;
+	}
+
+	public Date getFechaFin() {
+		return fechaFin;
+	}
+
+	public void setFechaFin(Date fechaFin) {
+		this.fechaFin = fechaFin;
+	}
+
+	public long getEndSesion() {
+		return endSesion;
+	}
+
+	public void setEndSesion(long endSesion) {
+		this.endSesion = endSesion;
+	}
+
+	public SegLogSesion getChainSessionId() {
+		return chainSessionId;
+	}
+
+	public void setChainSessionId(SegLogSesion chainSessionId) {
+		this.chainSessionId = chainSessionId;
+	}
 	
 	
 }

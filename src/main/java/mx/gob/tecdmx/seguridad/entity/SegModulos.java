@@ -47,6 +47,70 @@ public class SegModulos {
 	@Column(name = "menu_pos")
 	int  menuPos;
 
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public SegCatNivelModulo getNIdNivel() {
+		return nIdNivel;
+	}
+
+	public void setNIdNivel(SegCatNivelModulo nIdNivel) {
+		this.nIdNivel = nIdNivel;
+	}
+
+	public String getDescModulo() {
+		return descModulo;
+	}
+
+	public void setDescModulo(String descModulo) {
+		this.descModulo = descModulo;
+	}
+
+	public SegModulos getNIdModuloPadre() {
+		return nIdModuloPadre;
+	}
+
+	public void setNIdModuloPadre(SegModulos nIdModuloPadre) {
+		this.nIdModuloPadre = nIdModuloPadre;
+	}
+
+	public String getMenu() {
+		return menu;
+	}
+
+	public void setMenu(String menu) {
+		this.menu = menu;
+	}
+
+	public String getMenuDesc() {
+		return menuDesc;
+	}
+
+	public void setMenuDesc(String menuDesc) {
+		this.menuDesc = menuDesc;
+	}
+
+	public String getMenuUrl() {
+		return menuUrl;
+	}
+
+	public void setMenuUrl(String menuUrl) {
+		this.menuUrl = menuUrl;
+	}
+
+	public int getMenuPos() {
+		return menuPos;
+	}
+
+	public void setMenuPos(int menuPos) {
+		this.menuPos = menuPos;
+	}
+
 	
 	
 }

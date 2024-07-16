@@ -23,7 +23,7 @@ public class SegLogUsuario {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Basic(optional = false)
 	@Column(name = "id_log_usuario", unique = true, nullable = false)
-	int  id_log_usuario;
+	int  id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="n_id_usuario", referencedColumnName="n_id_usuario")
@@ -37,6 +37,46 @@ public class SegLogUsuario {
   
 	@Column(name = "bitacora")
 	String  bitacora;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public SegUsuarios getIdUsuario() {
+		return idUsuario;
+	}
+
+	public void setIdUsuario(SegUsuarios idUsuario) {
+		this.idUsuario = idUsuario;
+	}
+
+	public Date getDSistema() {
+		return dSistema;
+	}
+
+	public void setDSistema(Date dSistema) {
+		this.dSistema = dSistema;
+	}
+
+	public int getSessionId() {
+		return sessionId;
+	}
+
+	public void setSessionId(int sessionId) {
+		this.sessionId = sessionId;
+	}
+
+	public String getBitacora() {
+		return bitacora;
+	}
+
+	public void setBitacora(String bitacora) {
+		this.bitacora = bitacora;
+	}
 
 	
 }

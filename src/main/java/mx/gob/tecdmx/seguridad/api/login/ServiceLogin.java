@@ -9,6 +9,7 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import mx.gob.tecdmx.seguridad.entity.SegUsuarios;
 import mx.gob.tecdmx.seguridad.repository.SegLogSesionRepository;
 import mx.gob.tecdmx.seguridad.repository.SegUsuariosRepository;
 import mx.gob.tecdmx.seguridad.security.config.Constants;
+import mx.gob.tecdmx.seguridad.security.config.UsuarioSecurityDTO;
 
 @Service
 public class ServiceLogin {
@@ -105,5 +107,38 @@ public class ServiceLogin {
 
 		return responseDto;
 	}
+
+	public boolean logout(Authentication auth) {
+		UsuarioSecurityDTO usuarioVO = (UsuarioSecurityDTO) auth.getDetails();
+		Optional<SegLogSesion> sesionExist =SegLogSesionRepository.findById(Integer.parseInt(usuarioVO.getIdSession()));
+		if(sesionExist.isPresent()) {
+			
+			 long tiempoTerminacion = System.currentTimeMillis();
+			//almacena el Log de la sesión
+			sesionExist.get().setFechaFin(new Date());
+			sesionExist.get().setEndSesion(tiempoTerminacion);
+			SegLogSesionRepository.save(sesionExist.get());
+			
+			return true;
+		}
+		
+		
+		return false;
+		
+	}
+	
+	public DTOResponseLogin updatePassword(DTOPayloadLogin payload) {
+		DTOResponseLogin responseDto = new DTOResponseLogin();
+		Optional<SegUsuarios> credentials = SegUsuariosRepository.findBysEmail(payload.getEmail());
+		if (credentials.isPresent()) {
+			credentials.get().setsContrasenia(bCryptPasswordEncoder.encode(payload.getPassword()));
+			SegUsuariosRepository.save(credentials.get());
+			responseDto.setStatus("La contraseña se ha actualizado satisfactoriamente");
+		} else {
+			responseDto.setStatus("El usuario ingresado no se encuentra registrado");
+		}
+		return responseDto;
+	}
+
 
 }

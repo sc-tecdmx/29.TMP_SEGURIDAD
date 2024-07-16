@@ -38,6 +38,46 @@ public class SegRolesUsuarios {
 	@JoinColumn(name="n_session_id", referencedColumnName="n_session_id")
 	SegLogSesion  nSessionId;
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public SegRoles getIdRol() {
+		return idRol;
+	}
+
+	public void setIdRol(SegRoles idRol) {
+		this.idRol = idRol;
+	}
+
+	public SegUsuarios getIdUsuario() {
+		return idUsuario;
+	}
+
+	public void setIdUsuario(SegUsuarios idUsuario) {
+		this.idUsuario = idUsuario;
+	}
+
+	public int getIdEmpleadoPuestoArea() {
+		return idEmpleadoPuestoArea;
+	}
+
+	public void setIdEmpleadoPuestoArea(int idEmpleadoPuestoArea) {
+		this.idEmpleadoPuestoArea = idEmpleadoPuestoArea;
+	}
+
+	public SegLogSesion getNSessionId() {
+		return nSessionId;
+	}
+
+	public void setNSessionId(SegLogSesion nSessionId) {
+		this.nSessionId = nSessionId;
+	}
+
 	
 	
 }

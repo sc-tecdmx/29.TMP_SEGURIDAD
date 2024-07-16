@@ -9,5 +9,20 @@ public class IDUsuariosModulos implements Serializable {
 	
 	private Integer nIdUsuario;
     private Integer nIdModulo;
+    
+	public Integer getNIdUsuario() {
+		return nIdUsuario;
+	}
+	public void setNIdUsuario(Integer nIdUsuario) {
+		this.nIdUsuario = nIdUsuario;
+	}
+	public Integer getNIdModulo() {
+		return nIdModulo;
+	}
+	public void setNIdModulo(Integer nIdModulo) {
+		this.nIdModulo = nIdModulo;
+	}
+    
+    
 	
 }
