@@ -5,6 +5,7 @@
  */
 package mx.gob.tecdmx.seguridad.api.usuario;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -181,5 +182,44 @@ public class UsuarioService {
 		response.setStatus("Fail");
 		return response;
 	}
+	
+	public DTOResponse getUsuarios(DTOResponse response) {
+//		DTOUserInfo userInfo = null;
+//		List<DTOUserInfo> usuariosInfo = new ArrayList<DTOUserInfo>();
+//		Iterable<SegUsuarios> usuarios = SegUsuariosRepository.findAll();
+//		for (SegUsuarios usuario : usuarios) {
+//			
+//			Optional<InstEmpleado> empleado = instEmpleadoRepository.findByIdUsuario(usuario);
+//			userInfo = new DTOUserInfo();
+//
+//			userInfo.setIdUsuario(usuario.getnIdUsuario());
+//			userInfo.setNombre(empleado.get().getNombre());
+//			userInfo.setApellido1(empleado.get().getApellido1());
+//			userInfo.setApellido2(empleado.get().getApellido2());
+//			userInfo.setIdEmpleado(empleado.get().getId());
+//			userInfo.setUsuario(usuario.getsUsuario());
+//			userInfo.setEmail(usuario.getsEmail());
+//			
+//			Optional<SegCatEstadoUsuario> idEstado = segCatEstadoUsuarioRepository.findById(usuario.getnIdEstadoUsuario().getN_id_estado_usuario());
+//			
+//			userInfo.setStatusCuenta(idEstado.get().getDescripcion());
+//
+//			ResponseBodyMenu menu = new ResponseBodyMenu();
+//			List<PerfilDTO> perfiles = serviceMenu.getMenu(menu, usuario);
+//			userInfo.setPerfiles(perfiles);
+//			
+////			userInfo.setRol(menu.getRol());
+////			userInfo.setAplicacion(menu.getAplicacion());
+////			menu.setMenu(null);
+//
+//			usuariosInfo.add(userInfo);
+//		}
+//
+//		response.setMessage("Información de los Usuarios");
+//		response.setStatus("Success");
+//		response.setData(usuariosInfo);
+		return response;
+	}
+
 
 }

@@ -51,5 +51,84 @@ public class SegRolesModulos {
     @JoinColumn(name="n_id_modulo", referencedColumnName="n_id_modulo", insertable = false, updatable = false)
     private SegModulos segModulos;
 
-	
+
+public Integer getnIdRol() {
+		return nIdRol;
+	}
+
+	public void setnIdRol(Integer nIdRol) {
+		this.nIdRol = nIdRol;
+	}
+
+	public Integer getnIdModulo() {
+		return nIdModulo;
+	}
+
+	public void setnIdModulo(Integer nIdModulo) {
+		this.nIdModulo = nIdModulo;
+	}
+
+	public String getCrear() {
+		return crear;
+	}
+
+	public void setCrear(String crear) {
+		this.crear = crear;
+	}
+
+	public String getLeer() {
+		return leer;
+	}
+
+	public void setLeer(String leer) {
+		this.leer = leer;
+	}
+
+	public String getEditar() {
+		return editar;
+	}
+
+	public void setEditar(String editar) {
+		this.editar = editar;
+	}
+
+	public String getEliminar() {
+		return eliminar;
+	}
+
+	public void setEliminar(String eliminar) {
+		this.eliminar = eliminar;
+	}
+
+	public String getPublico() {
+		return publico;
+	}
+
+	public void setPublico(String publico) {
+		this.publico = publico;
+	}
+
+	public Integer getSessionId() {
+		return sessionId;
+	}
+
+	public void setSessionId(Integer sessionId) {
+		this.sessionId = sessionId;
+	}
+
+	public SegRoles getSegRoles() {
+		return segRoles;
+	}
+
+	public void setSegRoles(SegRoles segRoles) {
+		this.segRoles = segRoles;
+	}
+
+	public SegModulos getSegModulos() {
+		return segModulos;
+	}
+
+	public void setSegModulos(SegModulos segModulos) {
+		this.segModulos = segModulos;
+	}
 }

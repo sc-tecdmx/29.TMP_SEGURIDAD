@@ -39,4 +39,12 @@ public class RestControllerUsuarios {
 		return usuarioService.userInfo(auth, response);
 	}
 	
+	@CrossOrigin()
+	@RequestMapping(method = RequestMethod.GET, path = "/usuarios", produces = "application/json")
+	@ResponseBody
+	public DTOResponse getusuarios() {
+		DTOResponse response = new DTOResponse();
+		return usuarioService.getUsuarios(response);
+	}
+	
 }

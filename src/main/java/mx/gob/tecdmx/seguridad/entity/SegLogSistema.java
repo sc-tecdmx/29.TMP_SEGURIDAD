@@ -38,4 +38,44 @@ public class SegLogSistema {
 	@Column(name = "bitacora")
 	String  bitacora;
 	
+	public int getId_log_sistema() {
+		return id_log_sistema;
+	}
+
+	public void setId_log_sistema(int id_log_sistema) {
+		this.id_log_sistema = id_log_sistema;
+	}
+
+	public SegUsuarios getIdUsuarioOrg() {
+		return idUsuarioOrg;
+	}
+
+	public void setIdUsuarioOrg(SegUsuarios idUsuarioOrg) {
+		this.idUsuarioOrg = idUsuarioOrg;
+	}
+
+	public int getIdUsuarioJel() {
+		return idUsuarioJel;
+	}
+
+	public void setIdUsuarioJel(int idUsuarioJel) {
+		this.idUsuarioJel = idUsuarioJel;
+	}
+
+	public Date getdSistema() {
+		return dSistema;
+	}
+
+	public void setdSistema(Date dSistema) {
+		this.dSistema = dSistema;
+	}
+
+	public String getBitacora() {
+		return bitacora;
+	}
+
+	public void setBitacora(String bitacora) {
+		this.bitacora = bitacora;
+	}
+	
 }

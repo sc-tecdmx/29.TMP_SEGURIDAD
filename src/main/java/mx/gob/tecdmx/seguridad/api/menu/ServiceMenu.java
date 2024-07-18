@@ -200,8 +200,8 @@ public class ServiceMenu {
 				Optional<SegRoles> rol = SegRolesRepository.findByEtiquetaRol(permiso.getCodigoRol());
 				if (rol.isPresent()) {
 					SegRolesModulos rolToSave = new SegRolesModulos();
-					rolToSave.setNIdRol(rol.get().getId());
-					rolToSave.setNIdModulo(moduloPadre.getId());
+					rolToSave.setnIdRol(rol.get().getId());
+					rolToSave.setnIdModulo(moduloPadre.getId());
 					rolToSave.setCrear(permiso.isCrear() ? "S" : "N");
 					rolToSave.setLeer(permiso.isLeer() ? "S" : "N");
 					rolToSave.setEditar(permiso.isEditar() ? "S" : "N");

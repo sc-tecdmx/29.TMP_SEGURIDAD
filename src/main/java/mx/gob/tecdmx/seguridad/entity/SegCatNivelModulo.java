@@ -23,5 +23,21 @@ public class SegCatNivelModulo {
 	@Column(name = "desc_nivel")
 	String  descNivel;
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getDescNivel() {
+		return descNivel;
+	}
+
+	public void setDescNivel(String descNivel) {
+		this.descNivel = descNivel;
+	}
+
 	
 }
