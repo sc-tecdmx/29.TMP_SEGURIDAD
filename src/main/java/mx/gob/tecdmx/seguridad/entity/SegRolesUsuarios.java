@@ -32,7 +32,7 @@ public class SegRolesUsuarios {
 	SegUsuarios  idUsuario;
 
 	@Column(name = "n_id_empleado_puesto_area")
-	int idEmpleadoPuestoArea;
+	Integer idEmpleadoPuestoArea;
   
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="n_session_id", referencedColumnName="n_session_id")
@@ -62,12 +62,20 @@ public class SegRolesUsuarios {
 		this.idUsuario = idUsuario;
 	}
 
-	public int getIdEmpleadoPuestoArea() {
+	public Integer getIdEmpleadoPuestoArea() {
 		return idEmpleadoPuestoArea;
 	}
 
-	public void setIdEmpleadoPuestoArea(int idEmpleadoPuestoArea) {
+	public void setIdEmpleadoPuestoArea(Integer idEmpleadoPuestoArea) {
 		this.idEmpleadoPuestoArea = idEmpleadoPuestoArea;
+	}
+
+	public SegLogSesion getnSessionId() {
+		return nSessionId;
+	}
+
+	public void setnSessionId(SegLogSesion nSessionId) {
+		this.nSessionId = nSessionId;
 	}
 
 	public SegLogSesion getNSessionId() {
