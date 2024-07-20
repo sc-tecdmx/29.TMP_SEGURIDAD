@@ -49,7 +49,6 @@ public class ServiceMenu {
 	@Autowired
 	SegLogSesionRepository SegLogSesionRepository;
 
-
 	@Value("${spring.application.name}")
 	private String nombreAplicativo;
 
@@ -96,8 +95,7 @@ public class ServiceMenu {
 //			System.out.println(usuarioRol.getIdRol().getDescripcion());
 
 			// Se devuelve siempre y cuando se se encuentre activo
-			List<SegRolesModulos> rolesModulos = SegRolesModulosRepository
-					.findBySegRoles(usuarioRol.getIdRol());
+			List<SegRolesModulos> rolesModulos = SegRolesModulosRepository.findBySegRoles(usuarioRol.getIdRol());
 			List<PayloadMenu> menu = new ArrayList<PayloadMenu>();
 			for (SegRolesModulos rolMod : rolesModulos) {
 				if (rolMod.getSegModulos().getDescModulo().equals(sys)
@@ -111,7 +109,7 @@ public class ServiceMenu {
 				System.out.println(rolMod.getSegModulos().getDescModulo());
 				System.out.println(rolMod.getSegModulos().getNIdNivel().getDescNivel());
 			}
-			
+
 			PerfilDTO perfil = new PerfilDTO();
 			perfil.setPerfil("INTERNO");
 			perfil.setMenu(acceso);
@@ -120,18 +118,16 @@ public class ServiceMenu {
 		return perfiles;
 	}
 
-	
 	public List<PerfilDTO> getMenu(Authentication auth) {
 		UsuarioSecurityDTO usuario = (UsuarioSecurityDTO) auth.getDetails();
 		Optional<SegUsuarios> credentials = SegUsuariosRepository.findBysEmail(usuario.getEmail());
 		ResponseBodyMenu acceso = new ResponseBodyMenu();
 		List<PerfilDTO> perfiles = null;
 		if (credentials.isPresent()) {
-			 perfiles = getMenu(acceso, credentials.get(), usuario.getSys());
+			perfiles = getMenu(acceso, credentials.get(), usuario.getSys());
 		}
 		return perfiles;
 	}
-	
 
 	public SegCatNivelModulo findNivel(String nivel) {
 		Optional<SegCatNivelModulo> nivelModulo = segCatNivelModuloRepository.findByDescNivel(nivel);
@@ -169,10 +165,16 @@ public class ServiceMenu {
 		SegModulos modulo = new SegModulos();
 
 		SegCatNivelModulo nivelModulo = findNivel(payload.getNivelModulo());
+
 		modulo.setNIdNivel(nivelModulo);
 		modulo.setDescModulo(payload.getNombreModulo());
-
+		
+		Optional<SegModulos> moduloExist = SegModulosRepository.findByDescModulo(payload.getNombreModulo());
 		if (payload.getNivelModulo().equals("Aplicación")) {
+			if (moduloExist.isPresent()) {
+				// retorna un objeto vacío por que ya existe esa aplicación
+				return moduloPadre;
+			}
 			Optional<SegModulos> moduloNoParent = SegModulosRepository.findById(-1);
 			modulo.setNIdModuloPadre(moduloNoParent.get());
 			modulo.setMenu("N");
@@ -180,6 +182,7 @@ public class ServiceMenu {
 			modulo.setMenuPos(1);
 
 		} else {
+			
 			modulo.setNIdModuloPadre(padreid);
 			modulo.setMenu("S");
 			modulo.setMenuUrl(payload.getUrl());
@@ -230,6 +233,9 @@ public class ServiceMenu {
 		if (moduloStored != null) {
 			response.setMessage("EL menú se ha guardado exitósamente");
 			response.setStatus("Success");
+		}else {
+			response.setMessage("El menú que quieres crear ya existe");
+			response.setStatus("Fail");
 		}
 		return response;
 	}

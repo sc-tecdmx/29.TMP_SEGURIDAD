@@ -194,6 +194,7 @@ INSERT INTO seg_cat_nivel_modulo(n_id_nivel, desc_nivel)VALUES
 (2, 'Módulo'),
 (3, 'Sub Módulo'),
 (4, 'Pantalla');
+(5, 'Sub Pantalla');
 
 INSERT INTO pki_cat_firma_aplicada(id_firma_aplicada, desc_firma_aplicada)VALUES
 (1, 'Firmado'),
