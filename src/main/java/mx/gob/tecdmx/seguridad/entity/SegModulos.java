@@ -37,6 +37,9 @@ public class SegModulos {
   
 	@Column(name = "menu")
 	String  menu;
+	
+	@Column(name = "codigo")
+	String  codigo;
   
 	@Column(name = "menu_desc")
 	String  menuDesc;
@@ -111,6 +114,28 @@ public class SegModulos {
 		this.menuPos = menuPos;
 	}
 
-	
+	public SegCatNivelModulo getnIdNivel() {
+		return nIdNivel;
+	}
+
+	public void setnIdNivel(SegCatNivelModulo nIdNivel) {
+		this.nIdNivel = nIdNivel;
+	}
+
+	public SegModulos getnIdModuloPadre() {
+		return nIdModuloPadre;
+	}
+
+	public void setnIdModuloPadre(SegModulos nIdModuloPadre) {
+		this.nIdModuloPadre = nIdModuloPadre;
+	}
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
 	
 }

@@ -136,4 +136,64 @@ public class ServiceAdmin {
 		return response;
 	}
 
+	public DTOResponseAdmin crearRol(PayloadRol payload, DTOResponseAdmin response) {
+		Optional<SegRoles> rolExist = segRolesRepository.findByEtiquetaRol(payload.getCodigo());
+		if (rolExist.isPresent()) {
+			response.setStatus("Fail");
+			response.setMessage("El rol que desean ingresar ya Existe");
+			return response;
+		} else {
+			Optional<SegRoles> rolPadre = segRolesRepository.findById(payload.getRolPadre());
+			if (rolPadre.isPresent()) {
+				SegRoles newRol = new SegRoles();
+				newRol.setEtiquetaRol(payload.getCodigo());
+				newRol.setDescripcion(payload.getDescripcion());
+				newRol.setRolPadreId(rolPadre.get());
+				newRol.setRecActivo(1);
+				segRolesRepository.save(newRol);
+
+				response.setStatus("Succes");
+				response.setMessage("El rol se ha guardado correctamente");
+
+			} else {
+				response.setStatus("Fail");
+				response.setMessage("El rol padre no existe");
+			}
+
+		}
+		// TODO Auto-generated method stub
+		return response;
+	}
+
+	public DTOResponseAdmin asociarRolModulos(PayloadRolMenu payload, DTOResponseAdmin response) {
+
+		if(payload.getCodigoRol()!=null) {
+			Optional<SegRoles> rolExist = segRolesRepository.findByEtiquetaRol(payload.getCodigoRol());
+					if(rolExist.isPresent()) {
+						if(payload.getMenuRol()!=null) {
+							for(DTORolMenu modulo :payload.getMenuRol().getModulos()) {
+								Optional <SegModulos> moduloExist = segModulosRepository.findById(modulo.getModuloId());
+								
+//								SegRolesModulos rolToSave = new SegRolesModulos();
+//								rolToSave.setnIdRol(rol.get().getId());
+//								rolToSave.setnIdModulo(moduloPadre.getId());
+//								rolToSave.setCrear(permiso.isCrear() ? "S" : "N");
+//								rolToSave.setLeer(permiso.isLeer() ? "S" : "N");
+//								rolToSave.setEditar(permiso.isEditar() ? "S" : "N");
+//								rolToSave.setEliminar(permiso.isEliminar() ? "S" : "N");
+//								rolToSave.setPublico(permiso.isPublico() ? "S" : "N");
+////								rolToSave.setN_session_id(sesionExist.get().getId());
+//								SegRolesModulosRepository.save(rolToSave);
+							}
+						}
+						
+						
+					}
+			
+		}
+	
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

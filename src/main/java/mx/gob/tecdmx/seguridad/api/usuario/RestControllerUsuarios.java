@@ -32,6 +32,16 @@ public class RestControllerUsuarios {
 	}
 	
 	@CrossOrigin()
+	@RequestMapping(method = RequestMethod.POST, path = "/user-rol-moduls", produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<String> UsuarioRolModulo(@RequestBody DTOUsuario user) {
+		MetodosUtils utils = new MetodosUtils();
+		DTOResponse response = new DTOResponse();
+		usuarioService.rolAndModulosByUser(user, response);
+		return ResponseEntity.ok().header(null).body(utils.objectToJson(response));
+	}
+	
+	@CrossOrigin()
 	@RequestMapping(method = RequestMethod.POST, path = "/userinfo", produces = "application/json")
 	@ResponseBody
 	public DTOResponse userInfo(Authentication auth) {

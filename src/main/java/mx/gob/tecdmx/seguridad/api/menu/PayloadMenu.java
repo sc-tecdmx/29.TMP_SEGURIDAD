@@ -6,11 +6,18 @@ public class PayloadMenu {
 	
 	String nivelModulo;
 	String nombreModulo;
+	String codigo;
 	String url;
 	int pos;
 	List<PayloadMenu> modulos;
 	List<DTOPermisos> permisos;
 	
+	public String getCodigo() {
+		return codigo;
+	}
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
 	public String getNivelModulo() {
 		return nivelModulo;
 	}

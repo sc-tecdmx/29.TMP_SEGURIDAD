@@ -142,20 +142,23 @@ public class ServiceMenu {
 		if (nivelModulo == null) {
 			return false;
 		}
+		if (payload.getCodigo() == null) {
+			return false;
+		}
 		if (payload.getModulos() != null) {
 			for (PayloadMenu moduloPayload : payload.getModulos()) {
 				return validateNivelAndPermisos(moduloPayload);
 			}
 		}
 
-		if (payload.getPermisos() != null) {
-			for (DTOPermisos permiso : payload.getPermisos()) {
-				Optional<SegRoles> rol = SegRolesRepository.findByEtiquetaRol(permiso.getCodigoRol());
-				if (!rol.isPresent()) {
-					return false;
-				}
-			}
-		}
+//		if (payload.getPermisos() != null) {
+//			for (DTOPermisos permiso : payload.getPermisos()) {
+//				Optional<SegRoles> rol = SegRolesRepository.findByEtiquetaRol(permiso.getCodigoRol());
+//				if (!rol.isPresent()) {
+//					return false;
+//				}
+//			}
+//		}
 		return true;
 	}
 
@@ -168,10 +171,17 @@ public class ServiceMenu {
 
 		modulo.setNIdNivel(nivelModulo);
 		modulo.setDescModulo(payload.getNombreModulo());
+
+		Optional<SegModulos> moduloExist = SegModulosRepository.findByCodigo(payload.getCodigo());
+		if (moduloExist.isPresent()) {
+			// retorna un objeto vacío por que ya existe esa aplicación
+			return moduloPadre;
+		}
+		modulo.setCodigo(payload.getCodigo());
 		
-		Optional<SegModulos> moduloExist = SegModulosRepository.findByDescModulo(payload.getNombreModulo());
 		if (payload.getNivelModulo().equals("Aplicación")) {
-			if (moduloExist.isPresent()) {
+			Optional<SegModulos> app = SegModulosRepository.findByDescModulo(payload.getNombreModulo());
+			if(app.isPresent()) {
 				// retorna un objeto vacío por que ya existe esa aplicación
 				return moduloPadre;
 			}
@@ -180,9 +190,10 @@ public class ServiceMenu {
 			modulo.setMenu("N");
 			modulo.setMenuUrl(null);
 			modulo.setMenuPos(1);
+			
 
 		} else {
-			
+
 			modulo.setNIdModuloPadre(padreid);
 			modulo.setMenu("S");
 			modulo.setMenuUrl(payload.getUrl());
@@ -197,25 +208,25 @@ public class ServiceMenu {
 			}
 		}
 
-		if (payload.getPermisos() != null) {
-			for (DTOPermisos permiso : payload.getPermisos()) {
-
-				Optional<SegRoles> rol = SegRolesRepository.findByEtiquetaRol(permiso.getCodigoRol());
-				if (rol.isPresent()) {
-					SegRolesModulos rolToSave = new SegRolesModulos();
-					rolToSave.setnIdRol(rol.get().getId());
-					rolToSave.setnIdModulo(moduloPadre.getId());
-					rolToSave.setCrear(permiso.isCrear() ? "S" : "N");
-					rolToSave.setLeer(permiso.isLeer() ? "S" : "N");
-					rolToSave.setEditar(permiso.isEditar() ? "S" : "N");
-					rolToSave.setEliminar(permiso.isEliminar() ? "S" : "N");
-					rolToSave.setPublico(permiso.isPublico() ? "S" : "N");
-//					rolToSave.setN_session_id(sesionExist.get().getId());
-					SegRolesModulosRepository.save(rolToSave);
-				}
-
-			}
-		}
+//		if (payload.getPermisos() != null) {
+//			for (DTOPermisos permiso : payload.getPermisos()) {
+//
+//				Optional<SegRoles> rol = SegRolesRepository.findByEtiquetaRol(permiso.getCodigoRol());
+//				if (rol.isPresent()) {
+//					SegRolesModulos rolToSave = new SegRolesModulos();
+//					rolToSave.setnIdRol(rol.get().getId());
+//					rolToSave.setnIdModulo(moduloPadre.getId());
+//					rolToSave.setCrear(permiso.isCrear() ? "S" : "N");
+//					rolToSave.setLeer(permiso.isLeer() ? "S" : "N");
+//					rolToSave.setEditar(permiso.isEditar() ? "S" : "N");
+//					rolToSave.setEliminar(permiso.isEliminar() ? "S" : "N");
+//					rolToSave.setPublico(permiso.isPublico() ? "S" : "N");
+////					rolToSave.setN_session_id(sesionExist.get().getId());
+//					SegRolesModulosRepository.save(rolToSave);
+//				}
+//
+//			}
+//		}
 		response.setData(moduloPadre);
 		return moduloPadre;
 	}
@@ -233,7 +244,7 @@ public class ServiceMenu {
 		if (moduloStored != null) {
 			response.setMessage("EL menú se ha guardado exitósamente");
 			response.setStatus("Success");
-		}else {
+		} else {
 			response.setMessage("El menú que quieres crear ya existe");
 			response.setStatus("Fail");
 		}

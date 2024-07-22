@@ -10,5 +10,6 @@ import mx.gob.tecdmx.seguridad.entity.SegModulos;
 @Repository
 public interface SegModulosRepository extends CrudRepository<SegModulos, Integer> {
   Optional <SegModulos> findByDescModulo(String desc);
+  Optional <SegModulos> findByCodigo(String codigo);
 	
 }

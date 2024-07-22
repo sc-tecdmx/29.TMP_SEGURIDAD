@@ -411,6 +411,7 @@ CREATE TABLE `seg_usuarios_modulos` (
 CREATE TABLE `seg_modulos` (
   `n_id_modulo` int PRIMARY KEY AUTO_INCREMENT,
   `n_id_nivel` int(2),
+  `codigo` varchar(10) UNIQUE,
   `desc_modulo` varchar(100),
   `n_id_modulo_padre` int,
   `menu` varchar(1) COMMENT 'S- Si, forma parte del menú',
@@ -624,6 +625,8 @@ ALTER TABLE `seg_roles` ADD FOREIGN KEY (`n_session_id`) REFERENCES `seg_log_ses
 ALTER TABLE `seg_roles_modulos` ADD FOREIGN KEY (`n_id_rol`) REFERENCES `seg_roles` (`n_id_rol`);
 
 ALTER TABLE `seg_roles_modulos` ADD FOREIGN KEY (`n_id_modulo`) REFERENCES `seg_modulos` (`n_id_modulo`);
+
+ALTER TABLE `seg_roles_modulos` ADD FOREIGN KEY (`n_session_id`) REFERENCES `seg_log_sesion` (`n_session_id`);
 
 ALTER TABLE `seg_usuarios_modulos` ADD FOREIGN KEY (`n_id_usuario`) REFERENCES `seg_usuarios` (`n_id_usuario`);
 

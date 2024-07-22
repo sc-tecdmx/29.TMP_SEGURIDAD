@@ -30,7 +30,7 @@ public class RestControllerMenu {
 		return null;
 		//return menuService.getMenu(auth);
 	}
-
+	
 	@CrossOrigin()
 	@RequestMapping(method = RequestMethod.POST, path = "/create-menu", produces = "application/json")
 	@ResponseBody

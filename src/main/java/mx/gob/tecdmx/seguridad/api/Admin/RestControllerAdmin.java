@@ -27,6 +27,22 @@ public class RestControllerAdmin {
 	}
 	
 	@CrossOrigin()
+	@RequestMapping(method = RequestMethod.POST, path = "/create-rol", produces = "application/json")
+	@ResponseBody
+	public DTOResponseAdmin crearRol(@RequestBody PayloadRol payload) {
+		DTOResponseAdmin response = new DTOResponseAdmin();
+		return serviceAdmin.crearRol(payload,response);
+	}
+	
+	@CrossOrigin()
+	@RequestMapping(method = RequestMethod.POST, path = "/rol-modulos", produces = "application/json")
+	@ResponseBody
+	public DTOResponseAdmin asociarRolModulos(@RequestBody PayloadRolMenu payload) {
+		DTOResponseAdmin response = new DTOResponseAdmin();
+		return serviceAdmin.asociarRolModulos(payload,response);
+	}
+	
+	@CrossOrigin()
 	@RequestMapping(method = RequestMethod.POST, path = "/editar-permisos/{idRol}", produces = "application/json")
 	@ResponseBody
 	public DTOResponseAdmin editarPermisoByRol(@RequestBody ResponseBodyMenu payload, @PathVariable("idRol") int idRol) {
