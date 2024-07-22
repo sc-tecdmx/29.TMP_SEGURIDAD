@@ -103,7 +103,7 @@ public class UsuarioService {
 
 		} else {
 			usuarioStored = usuarioEmail.get();
-			Optional<SegModulos> modulo = segModulosRepository.findByDescModulo(userDTO.getSistema());
+			Optional<SegModulos> modulo = segModulosRepository.findByCodigo(userDTO.getCodigoSistema());
 
 			IDUsuariosModulos usuModId = new IDUsuariosModulos();
 			usuModId.setNIdModulo(modulo.get().getId());
@@ -153,7 +153,7 @@ public class UsuarioService {
 		dtoUser.setUsuario(usuarioStored.getsUsuario());
 		// dtoUser.setCodigoRol(rol.get().getEtiquetaRol());
 		dtoUser.setEstatusCuenta(statusUsuario.get().getDescripcion());
-		dtoUser.setSistema(userDTO.getSistema());
+		dtoUser.setCodigoSistema(userDTO.getCodigoSistema());
 
 		response.setData(dtoUser);
 		response.setMessage("El usuario se han creado correctamente");
@@ -237,7 +237,7 @@ public class UsuarioService {
 				// este ejecicio
 				SegRolesUsuariosRepository.save(rolesUsuarios);
 
-				Optional<SegModulos> modulo = segModulosRepository.findByDescModulo(userDTO.getSistema());
+				Optional<SegModulos> modulo = segModulosRepository.findByCodigo(userDTO.getCodigoSistema());
 
 				// Tabla usuario-modulos
 				SegUsuariosModulos usuariosModulos = new SegUsuariosModulos();
@@ -277,7 +277,7 @@ public class UsuarioService {
 				dtoUser.setUsuario(usuarioStored.getsUsuario());
 				dtoUser.setCodigoRol(rol.get().getEtiquetaRol());
 				dtoUser.setEstatusCuenta(statusUsuario.get().getDescripcion());
-				dtoUser.setSistema(userDTO.getSistema());
+				dtoUser.setCodigoSistema(userDTO.getCodigoSistema());
 
 				response.setData(dtoUser);
 				response.setMessage("El usuario se ha asociado correctamente");

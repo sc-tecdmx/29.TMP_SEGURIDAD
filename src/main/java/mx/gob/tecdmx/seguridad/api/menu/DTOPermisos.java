@@ -1,19 +1,19 @@
 package mx.gob.tecdmx.seguridad.api.menu;
 
 public class DTOPermisos {
-	String codigoRol;
+//	String codigoRol;
 	boolean crear;
 	boolean leer;
 	boolean editar;
 	boolean eliminar;
 	boolean publico;
 	
-	public String getCodigoRol() {
-		return codigoRol;
-	}
-	public void setCodigoRol(String codigoRol) {
-		this.codigoRol = codigoRol;
-	}
+//	public String getCodigoRol() {
+//		return codigoRol;
+//	}
+//	public void setCodigoRol(String codigoRol) {
+//		this.codigoRol = codigoRol;
+//	}
 	public boolean isCrear() {
 		return crear;
 	}

@@ -61,12 +61,13 @@ public class ServiceMenu {
 				permisos = new DTOPermisos();
 				menuChild.setNombreModulo(rolMod.getSegModulos().getDescModulo());
 				menuChild.setPos(rolMod.getSegModulos().getMenuPos());
+				menuChild.setCodigo(rolMod.getSegModulos().getCodigo());
 				menuChild.setNivelModulo(rolMod.getSegModulos().getNIdNivel().getDescNivel());
 				permisos.setCrear(rolMod.getCrear().equals("S") ? true : false);
 				permisos.setEditar(rolMod.getEditar().equals("S") ? true : false);
 				permisos.setEliminar(rolMod.getEliminar().equals("S") ? true : false);
 				permisos.setLeer(rolMod.getLeer().equals("S") ? true : false);
-				permisos.setCodigoRol(rolMod.getSegRoles().getEtiquetaRol());
+//				permisos.setCodigoRol(rolMod.getSegRoles().getEtiquetaRol());
 
 				List<DTOPermisos> permisosList = new ArrayList<DTOPermisos>();
 				permisosList.add(permisos);
@@ -91,8 +92,6 @@ public class ServiceMenu {
 		// Buscar los menus a los que tiene acceso en una determinada aplicación
 		for (SegRolesUsuarios usuarioRol : rolesUsuario) {
 			acceso = new ResponseBodyMenu();
-//			System.out.println(usuarioRol.getIdRol().getId());
-//			System.out.println(usuarioRol.getIdRol().getDescripcion());
 
 			// Se devuelve siempre y cuando se se encuentre activo
 			List<SegRolesModulos> rolesModulos = SegRolesModulosRepository.findBySegRoles(usuarioRol.getIdRol());
@@ -144,7 +143,14 @@ public class ServiceMenu {
 		}
 		if (payload.getCodigo() == null) {
 			return false;
+		} else {
+			Optional<SegModulos> moduloExist = SegModulosRepository.findByCodigo(payload.getCodigo());
+			if (moduloExist.isPresent()) {
+				// retorna un objeto vacío por que ya existe esa aplicación
+				return false;
+			}
 		}
+
 		if (payload.getModulos() != null) {
 			for (PayloadMenu moduloPayload : payload.getModulos()) {
 				return validateNivelAndPermisos(moduloPayload);
@@ -171,26 +177,14 @@ public class ServiceMenu {
 
 		modulo.setNIdNivel(nivelModulo);
 		modulo.setDescModulo(payload.getNombreModulo());
-
-		Optional<SegModulos> moduloExist = SegModulosRepository.findByCodigo(payload.getCodigo());
-		if (moduloExist.isPresent()) {
-			// retorna un objeto vacío por que ya existe esa aplicación
-			return moduloPadre;
-		}
 		modulo.setCodigo(payload.getCodigo());
-		
+
 		if (payload.getNivelModulo().equals("Aplicación")) {
-			Optional<SegModulos> app = SegModulosRepository.findByDescModulo(payload.getNombreModulo());
-			if(app.isPresent()) {
-				// retorna un objeto vacío por que ya existe esa aplicación
-				return moduloPadre;
-			}
 			Optional<SegModulos> moduloNoParent = SegModulosRepository.findById(-1);
 			modulo.setNIdModuloPadre(moduloNoParent.get());
 			modulo.setMenu("N");
 			modulo.setMenuUrl(null);
 			modulo.setMenuPos(1);
-			
 
 		} else {
 
@@ -207,26 +201,6 @@ public class ServiceMenu {
 				storeMenu(payload.getModulos().get(i), i + 1, moduloPadre, response);
 			}
 		}
-
-//		if (payload.getPermisos() != null) {
-//			for (DTOPermisos permiso : payload.getPermisos()) {
-//
-//				Optional<SegRoles> rol = SegRolesRepository.findByEtiquetaRol(permiso.getCodigoRol());
-//				if (rol.isPresent()) {
-//					SegRolesModulos rolToSave = new SegRolesModulos();
-//					rolToSave.setnIdRol(rol.get().getId());
-//					rolToSave.setnIdModulo(moduloPadre.getId());
-//					rolToSave.setCrear(permiso.isCrear() ? "S" : "N");
-//					rolToSave.setLeer(permiso.isLeer() ? "S" : "N");
-//					rolToSave.setEditar(permiso.isEditar() ? "S" : "N");
-//					rolToSave.setEliminar(permiso.isEliminar() ? "S" : "N");
-//					rolToSave.setPublico(permiso.isPublico() ? "S" : "N");
-////					rolToSave.setN_session_id(sesionExist.get().getId());
-//					SegRolesModulosRepository.save(rolToSave);
-//				}
-//
-//			}
-//		}
 		response.setData(moduloPadre);
 		return moduloPadre;
 	}
@@ -236,10 +210,11 @@ public class ServiceMenu {
 		boolean hasNivel = validateNivelAndPermisos(payload);
 
 		if (!hasNivel) {
-			response.setMessage("El/Los nivel(es) especificado(s) no existe(n)");
+			response.setMessage("El/Los nivel(es) especificado(s) no existe(n) o el modulo a registrar ya existe");
 			response.setStatus("Fail");
 			return response;
 		}
+
 		SegModulos moduloStored = storeMenu(payload, 1, null, response);
 		if (moduloStored != null) {
 			response.setMessage("EL menú se ha guardado exitósamente");

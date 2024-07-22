@@ -8,7 +8,7 @@ public class DTOUsuario {
 	String codigoRol;
 	String rolAnterior;
 	String email;
-	String sistema;
+	String codigoSistema;
 	
 	public String getUsuario() {
 		return usuario;
@@ -46,11 +46,12 @@ public class DTOUsuario {
 	public void setRolAnterior(String rolAnterior) {
 		this.rolAnterior = rolAnterior;
 	}
-	public String getSistema() {
-		return sistema;
+
+	public String getCodigoSistema() {
+		return codigoSistema;
 	}
-	public void setSistema(String sistema) {
-		this.sistema = sistema;
+	public void setCodigoSistema(String codigoSistema) {
+		this.codigoSistema = codigoSistema;
 	}
 	public int getIdUsuario() {
 		return idUsuario;
