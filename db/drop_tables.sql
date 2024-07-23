@@ -57,7 +57,20 @@ DROP TABLE seg_log_sesion;
 DROP TABLE seg_log_sistema;
 DROP TABLE seg_log_usuario;
 
-
 DROP TABLE jel_renapo_curps;
-DROP TABLE jel_persona_jel;
+DROP TABLE jel_cat_entidad_federativa;
+DROP TABLE jel_cat_tipo_medio;
+DROP TABLE jel_cat_autoridad_responsable;
+DROP TABLE jel_cat_tipo_expediente;
+DROP TABLE jel_cat_involucrados;
+DROP TABLE jel_cat_tipo_recepcion;
+DROP TABLE jel_cat_tipo_eleccion;
+DROP TABLE jel_cat_tipo_documento_electronico;
+DROP TABLE jel_ciudadano;
+DROP TABLE jel_cat_estatus_medio_impugnacion;
+DROP TABLE jel_medio_impugnacion;
+DROP TABLE jel_expediente;
+DROP TABLE jel_impugnacion_autoridad_responsables;
+DROP TABLE jel_medio_impugnacion_involucrados;
+
 SET FOREIGN_KEY_CHECKS=1;
