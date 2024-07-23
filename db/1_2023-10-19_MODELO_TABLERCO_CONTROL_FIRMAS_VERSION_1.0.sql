@@ -445,17 +445,6 @@ CREATE TABLE `seg_log_usuario` (
   `bitacora` varchar(1024)
 );
 
-CREATE TABLE `jel_persona_jel` (
-  `s_curp` varchar(20) PRIMARY KEY,
-  `id_persona_jel` int,
-  `nombre` varchar(40),
-  `apellido1` varchar(40),
-  `apellido2` varchar(40),
-  `s_rfc` varchar(12),
-  `genero` varchar(14),
-  `fecha_nacimiento` date,
-  `tipo_identificacion` int(2)
-);
 
 /*Actualización 5/dic-2023*/
 CREATE TABLE `tab_doc_grupos_firmas` (
@@ -473,6 +462,193 @@ CREATE TABLE `tab_doc_grupo_firmas_personas` (
   PRIMARY KEY (`n_id_grupo_personas`, `n_id_num_empleado`)
 );
 /*End actualización 5/dic-2023*/
+
+
+/*-------->ADECUACIÓN 23 JULIO 2024*/
+
+CREATE TABLE `jel_cat_entidad_federativa` (
+  `n_id_entidad_federativa` int PRIMARY KEY AUTO_INCREMENT,
+  `nombre` varchar(100)
+);
+
+CREATE TABLE `jel_cat_tipo_medio` (
+  `n_id_tipo_medio` int PRIMARY KEY AUTO_INCREMENT,
+  `nombre` varchar(100)
+);
+
+CREATE TABLE `jel_cat_autoridad_responsable` (/*En el sistema se relacionan con la entidad federativa ya que es multi tribunal, en este vale la pena hacerlo igual???*/
+  `id_autoridad_responsable` int PRIMARY KEY AUTO_INCREMENT
+);
+
+CREATE TABLE `jel_cat_tipo_expediente` (
+  `n_id_tipo_expediente` int PRIMARY KEY AUTO_INCREMENT,
+  `nombre` varchar(100)
+);
+
+CREATE TABLE `jel_cat_involucrados` (
+  `n_id_involucrados` int PRIMARY KEY AUTO_INCREMENT,
+  `nombre` varchar(100)
+);
+
+/*Aqui se almacenan:
+- correo electrónico
+- oficialía de partes
+- fax
+- juicio en linea
+*/
+CREATE TABLE `jel_cat_tipo_recepcion` (
+  `n_id_tipo_recepcion` int PRIMARY KEY AUTO_INCREMENT,
+  `nombre` varchar(100)
+);
+
+CREATE TABLE `jel_cat_tipo_eleccion` (
+  `n_id_tipo_eleccion` int PRIMARY KEY AUTO_INCREMENT,
+  `nombre` varchar(100)
+);
+
+/*Aqui se almacenan:
+- n_id_demanda
+- n_id_documento_original
+- n_id_documento_firmado
+- pruebas
+- comprobante_representante
+*/
+CREATE TABLE `jel_cat_tipo_documento_electronico` (
+  `n_id_tipo_documento_electronico` int PRIMARY KEY AUTO_INCREMENT,
+  `nombre` varchar(100)
+);
+
+
+CREATE TABLE `jel_ciudadano` (
+  `n_id_ciudadano` int PRIMARY KEY AUTO_INCREMENT,
+  `n_id_usuario` int,
+  `s_curp` varchar(20),
+  `s_rfc` varchar(12),
+  `nombre` varchar(70),
+  `apellido1` varchar(70),
+  `apellido2` varchar(70),
+  `email` varchar(256),
+  `fh_nac` datetime,
+  `sexo` varchar(1),
+  `telefono` varchar(10),
+  `calle_numero` varchar(100),
+  `colonia` varchar(256),
+  `cp` varchar(256),
+  `estado` varchar(256),
+  `ciudad` varchar(256),
+  `tipo_identificacion` int(2),
+  `aceptacion_terminos_uso` int(1)
+);
+
+/*
+- Guardado
+- Enviado
+*/
+CREATE TABLE `jel_cat_estatus_medio_impugnacion` (
+  `n_id_estatus_medio_impugnacion` int PRIMARY KEY AUTO_INCREMENT,
+  `desc_estatus` varchar(100),
+  `codigo_estatus` varchar(100)
+);
+
+
+/*Qué es el aviso de Interposición*/
+
+
+CREATE TABLE `jel_medio_impugnacion` (/*Demandas, interposición, impugnación, cual es la diferenca */
+    `n_id_medio_impugnacion` int PRIMARY KEY AUTO_INCREMENT,
+    /*PRESENTACIÓN DE DEMANDA a nombre propio o en representación de otra persona*/
+    `b_jel_en_representacion` int(1),
+    `s_jel_promovente` varchar(100),
+    `s_jel_representa` varchar(100),
+
+    `n_id_entidad_federativa` int, /*Entidad, nota: en el video aparece como tribunal del estado x*/
+    `n_id_tipo_medio` int,
+
+    `s_desc_acto_impugnado` varchar(100),
+
+    /*DEMANDA*/
+    `b_forma_presentacion_demanda`int(1),/* 1 -> Cargar archivo, 0 -> generar documento*/
+    /*si se genera el documento se llenan los siguientes campos de la plantilla*/
+    `s_jel_hechos` varchar(100),
+    `s_jel_agravios` varchar(100),
+    `s_jel_normas` varchar(100),/*Este campo es opcional*/
+
+    `n_id_estatus_medio_impugnacion` int,
+
+    `n_folio` int,
+
+    /*El número de expediente se asocia en el sistema de SISGAE*/
+    `s_num_expediente` varchar(100),/*-----> No lo vi en el sys, pero lo estoy usando como Expediente Asignado */
+
+    /*OTROS CAMPOS QUE NO APARECEN EN JEL PERO QUE SE REGISTRAN MANUALMENTE, EN EL MÓDULO DE AVISO DE INTERPOSICIÓN*/
+    `clave_tribunal` varchar(100),
+    `n_anio` int(4),
+    `n_id_tipo_expediente` int,
+    `consecutivo_aviso` int,
+    `consecutivo_expediente` int,
+    /*Recepción*/
+    `fecha_recepcion` datetime,
+    `hora_recepcion` datetime,
+    `n_id_tipo_recepcion` int,
+    `n_id_tipo_eleccion` int,
+    /*INVOLUCRADOS --> Es una relación muchos a muchos*/
+    /*DATOS DE REMISIÓN*/
+    `cargo_remite` varchar(200),
+    `numero_oficio` int,
+    `persona_suscribe` varchar(100),
+    `fecha_oficio` datetime,
+    `observaciones` varchar(100),
+
+    `d_fecha_interposicion` varchar(100),
+
+    /*PRUEBAS*/
+    `b_pruebas` int(1),/*Si hay pruebas se agregan en la tabla transitiva jel_medio_impugnacion_pruebas*/
+
+    /*SOLICITUD*/
+    `b_firmado` int(1),/*Si ya fue firmado el escrito o no, NO ENTIENDO SI LO QUE SE FIRMA ES EL DOCUMENTO DE DEMANDA O LA SOLICITUD, esto es importante porque si es el escrityo generado de demanda se debe firmar, pero si el que carga la demanda debe firmarlo, entonces ya no hay que firmar la solciitud o en caso contrario siempre se firma la solicitud*/
+    /*EN caso de que se firme la solicitud entonces aplicarian los campos de abajo*/
+    
+    `num_consecutivo` int,
+    `tipo_derecho` varchar(256),
+    `b_asignado`varchar(100),
+    `n_id_tema` int,
+    `acciones` varchar(100)
+
+);
+
+/*Aqui se almacenan:
+- n_id_demanda
+- n_id_documento_original => Esta es la solicitud, el documento autogenerado
+- n_id_documento_firmado => Esta es la solicitud firmada, el documento autogenerado
+- pruebas
+- comprobante_representante
+*/
+CREATE TABLE `jel_expediente` (/*Antes jel_documentos*/
+`n_id_expediente` int PRIMARY KEY AUTO_INCREMENT,
+`n_id_medio_impugnacion` int,
+`n_id_tipo_documento_electronico` int,
+`s_path_documento` varchar(100),
+`d_fecha_creacion` datetime
+);
+
+
+CREATE TABLE `jel_impugnacion_autoridad_responsables` (
+`n_id` int PRIMARY KEY AUTO_INCREMENT,
+`n_id_medio_impugnacion` int,
+`id_autoridad_responsable` int,
+`otra_autoridad_responsable` int/*Duda, cuando sea otra autoridad responsable puede ser escrito libre o solo desde un catálogo*/
+);
+
+CREATE TABLE `jel_medio_impugnacion_involucrados` (
+`n_id_medio_impugnacion_involucrados` int PRIMARY KEY AUTO_INCREMENT,
+`n_id_medio_impugnacion` int,
+`n_id_involucrados` int,
+`nombre_ciudadano` varchar(100),
+`sexo` varchar(1) /*M, F*/
+);
+
+/*-------->END ADECUACIÓN 23 JULIO 2024*/
+
 
 ALTER TABLE `tab_cat_tipo_documento` ADD FOREIGN KEY (`n_id_cat_area`) REFERENCES `inst_cat_areas` (`n_id_cat_area`);
 
@@ -640,8 +816,6 @@ ALTER TABLE `seg_log_sesion` ADD FOREIGN KEY (`n_id_usuario`) REFERENCES `seg_us
 
 ALTER TABLE `seg_log_sesion` ADD FOREIGN KEY (`chain_n_session_id`) REFERENCES `seg_log_sesion` (`n_session_id`);
 
-ALTER TABLE `jel_persona_jel` ADD FOREIGN KEY (`id_persona_jel`) REFERENCES `seg_usuarios` (`n_id_usuario`);
-
 ALTER TABLE `seg_log_sistema` ADD FOREIGN KEY (`n_id_usuario_org`) REFERENCES `seg_usuarios` (`n_id_usuario`);
 
 ALTER TABLE `seg_log_usuario` ADD FOREIGN KEY (`n_id_usuario`) REFERENCES `seg_usuarios` (`n_id_usuario`);
@@ -653,3 +827,28 @@ ALTER TABLE `tab_doc_grupo_firmas_personas` ADD FOREIGN KEY (`n_id_num_empleado`
 ALTER TABLE `tab_doc_grupo_firmas_personas` ADD FOREIGN KEY (`n_id_inst_firmante`) REFERENCES `tab_cat_inst_firmantes` (`n_id_inst_firmante`);
 ALTER TABLE `tab_doc_grupo_firmas_personas` ADD FOREIGN KEY (`n_id_inst_destinatario`) REFERENCES `tab_cat_inst_dest` (`n_id_inst_dest`);
 /*End actualización 5/dic-2023*/
+
+
+/*-------->ADECUACIÓN 23 JULIO 2024*/
+
+ALTER TABLE `jel_ciudadano` ADD FOREIGN KEY (`n_id_usuario`) REFERENCES `seg_usuarios` (`n_id_usuario`);
+
+ALTER TABLE `jel_impugnacion_autoridad_responsables` ADD FOREIGN KEY (`n_id_medio_impugnacion`) REFERENCES `jel_medio_impugnacion` (`n_id_medio_impugnacion`);
+ALTER TABLE `jel_impugnacion_autoridad_responsables` ADD FOREIGN KEY (`id_autoridad_responsable`) REFERENCES `jel_cat_autoridad_responsable` (`id_autoridad_responsable`);
+
+ALTER TABLE `jel_medio_impugnacion` ADD FOREIGN KEY (`n_id_entidad_federativa`) REFERENCES `jel_cat_entidad_federativa` (`n_id_entidad_federativa`);
+ALTER TABLE `jel_medio_impugnacion` ADD FOREIGN KEY (`n_id_tipo_medio`) REFERENCES `jel_cat_tipo_medio` (`n_id_tipo_medio`);
+ALTER TABLE `jel_medio_impugnacion` ADD FOREIGN KEY (`n_id_tipo_expediente`) REFERENCES `jel_cat_tipo_expediente` (`n_id_tipo_expediente`);
+ALTER TABLE `jel_medio_impugnacion` ADD FOREIGN KEY (`n_id_tipo_recepcion`) REFERENCES `jel_cat_tipo_recepcion` (`n_id_tipo_recepcion`);
+ALTER TABLE `jel_medio_impugnacion` ADD FOREIGN KEY (`n_id_tipo_eleccion`) REFERENCES `jel_cat_tipo_eleccion` (`n_id_tipo_eleccion`);
+ALTER TABLE `jel_medio_impugnacion` ADD FOREIGN KEY (`n_id_estatus_medio_impugnacion`) REFERENCES `jel_cat_estatus_medio_impugnacion` (`n_id_estatus_medio_impugnacion`);
+
+ALTER TABLE `jel_medio_impugnacion_involucrados` ADD FOREIGN KEY (`n_id_medio_impugnacion`) REFERENCES `jel_medio_impugnacion` (`n_id_medio_impugnacion`);
+ALTER TABLE `jel_medio_impugnacion_involucrados` ADD FOREIGN KEY (`n_id_involucrados`) REFERENCES `jel_cat_involucrados` (`n_id_involucrados`);
+
+ALTER TABLE `jel_expediente` ADD FOREIGN KEY (`n_id_medio_impugnacion`) REFERENCES `jel_medio_impugnacion` (`n_id_medio_impugnacion`);
+ALTER TABLE `jel_expediente` ADD FOREIGN KEY (`n_id_tipo_documento_electronico`) REFERENCES `jel_cat_tipo_documento_electronico` (`n_id_tipo_documento_electronico`);
+
+
+
+/*-------->END ADECUACIÓN 23 JULIO 2024*/
