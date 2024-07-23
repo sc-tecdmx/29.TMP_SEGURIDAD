@@ -117,6 +117,7 @@ public class ServiceMenu {
 		return perfiles;
 	}
 
+	
 	public List<PerfilDTO> getMenu(Authentication auth) {
 		UsuarioSecurityDTO usuario = (UsuarioSecurityDTO) auth.getDetails();
 		Optional<SegUsuarios> credentials = SegUsuariosRepository.findBysEmail(usuario.getEmail());

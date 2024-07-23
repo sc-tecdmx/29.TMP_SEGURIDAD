@@ -31,7 +31,8 @@ public class UsuarioImplementationSrv implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String emailAndIdSession) throws UsernameNotFoundException {
 		String email = emailAndIdSession.split(":")[0];
-		String idSession = emailAndIdSession.split(":")[1];
+		String session = emailAndIdSession.split(":")[1];
+		int idSession = Integer.parseInt(session);
 		String sys = emailAndIdSession.split(":")[2];
 		Optional<SegUsuarios> credentials = segUsuariosRepository.findBysEmail(email);
 		if (!credentials.isPresent()) {

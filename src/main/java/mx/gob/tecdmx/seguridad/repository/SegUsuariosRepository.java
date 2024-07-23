@@ -3,6 +3,8 @@ package mx.gob.tecdmx.seguridad.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,4 +16,5 @@ public interface SegUsuariosRepository extends CrudRepository<SegUsuarios, Integ
     Optional<SegUsuarios> findBysToken(String resetToken);
 	Optional<SegUsuarios> findBysUsuario(String email);
 	List<SegUsuarios> findAllBysUsuario(String email);
+	Page<SegUsuarios> findAll(Pageable pageable);
 }

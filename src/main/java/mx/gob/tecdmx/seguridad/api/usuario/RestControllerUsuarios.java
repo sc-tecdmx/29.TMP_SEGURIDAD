@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,10 +35,10 @@ public class RestControllerUsuarios {
 	@CrossOrigin()
 	@RequestMapping(method = RequestMethod.POST, path = "/user-rol-moduls", produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<String> UsuarioRolModulo(@RequestBody DTOUsuario user) {
+	public ResponseEntity<String> UsuarioRolModulo(@RequestBody DTOUsuario user, Authentication auth) {
 		MetodosUtils utils = new MetodosUtils();
 		DTOResponse response = new DTOResponse();
-		usuarioService.rolAndModulosByUser(user, response);
+		usuarioService.rolAndModulosByUser(user, response, auth);
 		return ResponseEntity.ok().header(null).body(utils.objectToJson(response));
 	}
 	
@@ -51,10 +52,11 @@ public class RestControllerUsuarios {
 	
 	@CrossOrigin()
 	@RequestMapping(method = RequestMethod.GET, path = "/usuarios", produces = "application/json")
-	@ResponseBody
-	public DTOResponse getusuarios() {
+	public DTOResponse getusuarios(Authentication auth,
+		        @RequestParam(defaultValue = "0") int pagina,
+		        @RequestParam(defaultValue = "10") int tamano) {
 		DTOResponse response = new DTOResponse();
-		return usuarioService.getUsuarios(response);
+		return usuarioService.getUsuarios(response, auth, pagina, tamano);
 	}
 	
 }

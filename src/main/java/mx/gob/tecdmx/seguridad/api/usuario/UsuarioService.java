@@ -11,14 +11,19 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import mx.gob.tecdmx.seguridad.api.login.ServiceLogin;
 import mx.gob.tecdmx.seguridad.api.menu.PerfilDTO;
+import mx.gob.tecdmx.seguridad.api.menu.ResponseBodyMenu;
 import mx.gob.tecdmx.seguridad.api.menu.ServiceMenu;
 import mx.gob.tecdmx.seguridad.entity.IDUsuariosModulos;
 import mx.gob.tecdmx.seguridad.entity.SegCatEstadoUsuario;
+import mx.gob.tecdmx.seguridad.entity.SegLogSesion;
 import mx.gob.tecdmx.seguridad.entity.SegLogUsuario;
 import mx.gob.tecdmx.seguridad.entity.SegModulos;
 import mx.gob.tecdmx.seguridad.entity.SegRoles;
@@ -118,26 +123,6 @@ public class UsuarioService {
 			}
 
 		}
-//		// Tabla Roles-Usuarios
-//		Optional<SegRoles> rol = SegRolesRepository.findByEtiquetaRol("SA");
-//		SegRolesUsuarios rolesUsuarios = new SegRolesUsuarios();
-//		rolesUsuarios.setIdRol(rol.get());
-//		rolesUsuarios.setIdUsuario(usuarioStored);
-//		// NOTA: No se setea la sesión ya que no hay autenticación
-//		// NOTA: No se setea el empleado puesto area, ya que no tenemos este dato para
-//		// este ejecicio
-//		SegRolesUsuariosRepository.save(rolesUsuarios);
-//
-//		Optional<SegModulos> modulo = segModulosRepository.findByDescModulo(userDTO.getSistema());
-//
-//		// Tabla usuario-modulos
-//		SegUsuariosModulos usuariosModulos = new SegUsuariosModulos();
-//		usuariosModulos.setNIdUsuario(usuarioStored.getnIdUsuario());
-//		usuariosModulos.setNIdModulo(modulo.get().getId());
-//		usuariosModulos.setFechaAlta(new Date());
-//		usuariosModulos.setFechaBaja(null);
-//		// Nota: No guardo la sesión
-//		segUsuariosModulosRepository.save(usuariosModulos);
 //
 		// almacena el Log del usuario
 		SegLogUsuario userLog = new SegLogUsuario();
@@ -151,7 +136,6 @@ public class UsuarioService {
 		dtoUser.setIdUsuario(usuarioStored.getnIdUsuario());
 		dtoUser.setEmail(usuarioStored.getsEmail());
 		dtoUser.setUsuario(usuarioStored.getsUsuario());
-		// dtoUser.setCodigoRol(rol.get().getEtiquetaRol());
 		dtoUser.setEstatusCuenta(statusUsuario.get().getDescripcion());
 		dtoUser.setCodigoSistema(userDTO.getCodigoSistema());
 
@@ -183,56 +167,56 @@ public class UsuarioService {
 		return response;
 	}
 
-	public DTOResponse getUsuarios(DTOResponse response) {
-//		DTOUserInfo userInfo = null;
-//		List<DTOUserInfo> usuariosInfo = new ArrayList<DTOUserInfo>();
-//		Iterable<SegUsuarios> usuarios = SegUsuariosRepository.findAll();
-//		for (SegUsuarios usuario : usuarios) {
-//			
-//			Optional<InstEmpleado> empleado = instEmpleadoRepository.findByIdUsuario(usuario);
-//			userInfo = new DTOUserInfo();
-//
-//			userInfo.setIdUsuario(usuario.getnIdUsuario());
-//			userInfo.setNombre(empleado.get().getNombre());
-//			userInfo.setApellido1(empleado.get().getApellido1());
-//			userInfo.setApellido2(empleado.get().getApellido2());
-//			userInfo.setIdEmpleado(empleado.get().getId());
-//			userInfo.setUsuario(usuario.getsUsuario());
-//			userInfo.setEmail(usuario.getsEmail());
-//			
-//			Optional<SegCatEstadoUsuario> idEstado = segCatEstadoUsuarioRepository.findById(usuario.getnIdEstadoUsuario().getN_id_estado_usuario());
-//			
-//			userInfo.setStatusCuenta(idEstado.get().getDescripcion());
-//
-//			ResponseBodyMenu menu = new ResponseBodyMenu();
-//			List<PerfilDTO> perfiles = serviceMenu.getMenu(menu, usuario);
-//			userInfo.setPerfiles(perfiles);
-//			
-////			userInfo.setRol(menu.getRol());
-////			userInfo.setAplicacion(menu.getAplicacion());
-////			menu.setMenu(null);
-//
-//			usuariosInfo.add(userInfo);
-//		}
-//
-//		response.setMessage("Información de los Usuarios");
-//		response.setStatus("Success");
-//		response.setData(usuariosInfo);
-		return response;
+	public DTOResponse getUsuarios(DTOResponse response, Authentication auth, int numeroPagina, int tamanoPagina) {
+		UsuarioSecurityDTO usuarioVO = (UsuarioSecurityDTO) auth.getDetails();
+        DTOUserInfo userInfo = null;
+        List<DTOUserInfo> usuariosInfo = new ArrayList<>();
+        Pageable pageable = PageRequest.of(numeroPagina, tamanoPagina);
+        Page<SegUsuarios> usuariosPage = SegUsuariosRepository.findAll(pageable);
+        List<SegUsuarios> usuarios = usuariosPage.getContent();
+
+        for (SegUsuarios usuario : usuarios) {
+            userInfo = new DTOUserInfo();
+            userInfo.setIdUsuario(usuario.getnIdUsuario());
+            userInfo.setUsuario(usuario.getsUsuario());
+            userInfo.setEmail(usuario.getsEmail());
+
+            Optional<SegCatEstadoUsuario> idEstado = segCatEstadoUsuarioRepository.findById(usuario.getnIdEstadoUsuario().getId());
+            if (idEstado.isPresent()) {
+                userInfo.setStatusCuenta(idEstado.get().getDescripcion());
+            }
+
+            ResponseBodyMenu menu = new ResponseBodyMenu();
+            List<PerfilDTO> perfiles = menuService.getMenu(menu, usuario, usuarioVO.getSys());
+            userInfo.setPerfiles(perfiles);
+
+            usuariosInfo.add(userInfo);
+        }
+
+        response.setMessage("Información de los Usuarios");
+        response.setStatus("Success");
+        response.setData(usuariosInfo);
+        return response;
+    
 	}
 
-	public DTOResponse rolAndModulosByUser(DTOUsuario userDTO, DTOResponse response) {
+	public DTOResponse rolAndModulosByUser(DTOUsuario userDTO, DTOResponse response,  Authentication auth) {
 		SegUsuarios usuarioStored = null;
+		UsuarioSecurityDTO userSecurity = (UsuarioSecurityDTO) auth.getDetails();
 		// verifica que el correo a utilizar no se encuentre en la bd de usuarios
 		Optional<SegUsuarios> usuarioExist = SegUsuariosRepository.findBysUsuario(userDTO.getUsuario());
 		if (usuarioExist.isPresent()) {
 			Optional<SegRoles> rol = SegRolesRepository.findByEtiquetaRol(userDTO.getCodigoRol());
 			if (rol.isPresent()) {
+				
 				// Tabla Roles-Usuarios
 				SegRolesUsuarios rolesUsuarios = new SegRolesUsuarios();
 				rolesUsuarios.setIdRol(rol.get());
 				rolesUsuarios.setIdUsuario(usuarioExist.get());
-				// NOTA: No se setea la sesión ya que no hay autenticación
+				Optional<SegLogSesion> sesionExist =SegLogSesionRepository.findById(userSecurity.getIdSession());
+				if(sesionExist.isPresent()) {
+				rolesUsuarios.setnSessionId(sesionExist.get());
+				}
 				// NOTA: No se setea el empleado puesto area, ya que no tenemos este dato para
 				// este ejecicio
 				SegRolesUsuariosRepository.save(rolesUsuarios);
@@ -246,7 +230,7 @@ public class UsuarioService {
 				usuariosModulos.setFechaAlta(new Date());
 				usuariosModulos.setStatus(true);
 				usuariosModulos.setFechaBaja(null);
-				// Nota: No guardo la sesión
+				usuariosModulos.setSessionId(userSecurity.getIdSession());
 				segUsuariosModulosRepository.save(usuariosModulos);
 
 				// Tabla usuario
@@ -260,13 +244,16 @@ public class UsuarioService {
 				bitacoraEstatusUsuario.setIdEstadoUsuario(statusUsuario.get());
 				bitacoraEstatusUsuario.setFingerprintDispositivo(null);
 				bitacoraEstatusUsuario.setFechaStatus(new Date());
+				if(sesionExist.isPresent()) {
+					bitacoraEstatusUsuario.setSessionId(sesionExist.get());
+				}
 				// NOTA: No se setea la sesión ya que no hay autenticación
 				SegUsuarioEstadoUsuarioRepository.save(bitacoraEstatusUsuario);
 
 				// almacena el Log del usuario
 				SegLogUsuario userLog = new SegLogUsuario();
 				userLog.setIdUsuario(usuarioStored);
-//				userLog.setN_session_id(sesionExist.get().getId());
+				userLog.setSessionId(sesionExist.get().getId());
 				userLog.setDSistema(new Date());
 				userLog.setBitacora("Actualizado");
 				segLogUsuarioRepository.save(userLog);

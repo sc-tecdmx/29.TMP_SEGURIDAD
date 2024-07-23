@@ -1,6 +1,7 @@
 package mx.gob.tecdmx.seguridad.api.Admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,32 +22,32 @@ public class RestControllerAdmin {
 	
 	@CrossOrigin()
 	@RequestMapping(method = RequestMethod.GET, path = "/rol-permisos/{idRol}", produces = "application/json")
-	public DTOResponseAdmin getPermisoByRol(@PathVariable("idRol") int idRol) {
+	public DTOResponseAdmin getPermisoByRol(@PathVariable("idRol") int idRol, Authentication auth) {
 		DTOResponseAdmin response = new DTOResponseAdmin();
-		return serviceAdmin.getPermisosByRol(response, idRol);
+		return serviceAdmin.getPermisosByRol(response, idRol,auth);
 	}
 	
 	@CrossOrigin()
 	@RequestMapping(method = RequestMethod.POST, path = "/create-rol", produces = "application/json")
 	@ResponseBody
-	public DTOResponseAdmin crearRol(@RequestBody PayloadRol payload) {
+	public DTOResponseAdmin crearRol(@RequestBody PayloadRol payload,  Authentication auth) {
 		DTOResponseAdmin response = new DTOResponseAdmin();
-		return serviceAdmin.crearRol(payload,response);
+		return serviceAdmin.crearRol(payload,response,auth);
 	}
 	
 	@CrossOrigin()
 	@RequestMapping(method = RequestMethod.POST, path = "/rol-modulos", produces = "application/json")
 	@ResponseBody
-	public DTOResponseAdmin asociarRolModulos(@RequestBody PayloadRolMenu payload) {
+	public DTOResponseAdmin asociarRolModulos(@RequestBody PayloadRolMenu payload, Authentication auth) {
 		DTOResponseAdmin response = new DTOResponseAdmin();
-		return serviceAdmin.asociarRolModulos(payload,response);
+		return serviceAdmin.asociarRolModulos(payload,response, auth);
 	}
 	
 	@CrossOrigin()
 	@RequestMapping(method = RequestMethod.POST, path = "/editar-permisos/{idRol}", produces = "application/json")
 	@ResponseBody
-	public DTOResponseAdmin editarPermisoByRol(@RequestBody ResponseBodyMenu payload, @PathVariable("idRol") int idRol) {
+	public DTOResponseAdmin editarPermisoByRol(@RequestBody ResponseBodyMenu payload, @PathVariable("idRol") int idRol, Authentication auth) {
 		DTOResponseAdmin response = new DTOResponseAdmin();
-		return serviceAdmin.editarPermisosByRol(payload,response, idRol);
+		return serviceAdmin.editarPermisosByRol(payload,response, idRol, auth);
 	}
 }

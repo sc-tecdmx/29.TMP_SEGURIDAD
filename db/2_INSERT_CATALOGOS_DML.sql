@@ -218,3 +218,7 @@ VALUES
 INSERT INTO pki_x509_ac_autorizadas
 (s_x509_emisor_serial, s_x509_ac_der_b64, s_x509_emisor_autoridad, s_tipo_certificado, s_url, s_x509_emisor_serial_parent)
 VALUES('11111', NULL, NULL, NULL, NULL, '11111');
+
+INSERT INTO seg_usuarios
+(s_usuario, s_contrasenia, s_desc_usuario, s_email, n_id_estado_usuario, s_token)
+VALUES('sisadmin', '$2a$10$jtHmCM8XcNvj5SqeUnIFyO31Vf8N.9ieXWEZe4anL5F9xJvB5Nb7i', '', 'servicios.firma@tecdmx.org.mx', 5, '');

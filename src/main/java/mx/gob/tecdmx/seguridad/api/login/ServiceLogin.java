@@ -110,7 +110,7 @@ public class ServiceLogin {
 
 	public boolean logout(Authentication auth) {
 		UsuarioSecurityDTO usuarioVO = (UsuarioSecurityDTO) auth.getDetails();
-		Optional<SegLogSesion> sesionExist =SegLogSesionRepository.findById(Integer.parseInt(usuarioVO.getIdSession()));
+		Optional<SegLogSesion> sesionExist =SegLogSesionRepository.findById(usuarioVO.getIdSession());
 		if(sesionExist.isPresent()) {
 			
 			 long tiempoTerminacion = System.currentTimeMillis();

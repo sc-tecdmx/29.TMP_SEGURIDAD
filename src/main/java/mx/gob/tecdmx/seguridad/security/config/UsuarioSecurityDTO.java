@@ -18,10 +18,10 @@ public class UsuarioSecurityDTO extends User {
 
 	private Integer idUsuario;
 	private String email;
-	private String idSession;
+	private int idSession;
 	private String sys;
     
-    public UsuarioSecurityDTO(Integer idUsuario, String username, String email, String idSession, String sys){
+    public UsuarioSecurityDTO(Integer idUsuario, String username, String email, int idSession, String sys){
         super(username, "", new ArrayList<GrantedAuthority>());
         this.idUsuario = idUsuario;
         this.email = email;
@@ -29,7 +29,7 @@ public class UsuarioSecurityDTO extends User {
         this.sys = sys;
     }
 
-    public UsuarioSecurityDTO(String username, String password, Collection<? extends GrantedAuthority> authorities, Integer idUsuario, String email, String idSession, String sys) {
+    public UsuarioSecurityDTO(String username, String password, Collection<? extends GrantedAuthority> authorities, Integer idUsuario, String email, int idSession, String sys) {
         super(username, password, authorities);
         this.idUsuario = idUsuario;
         this.email = email;
@@ -53,11 +53,11 @@ public class UsuarioSecurityDTO extends User {
 		this.email = email;
 	}
 
-	public String getIdSession() {
+	public int getIdSession() {
 		return idSession;
 	}
 
-	public void setIdSession(String idSession) {
+	public void setIdSession(int idSession) {
 		this.idSession = idSession;
 	}
 

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import mx.gob.tecdmx.seguridad.api.menu.DTOPermisos;
@@ -18,6 +19,7 @@ import mx.gob.tecdmx.seguridad.entity.SegRolesModulos;
 import mx.gob.tecdmx.seguridad.repository.SegModulosRepository;
 import mx.gob.tecdmx.seguridad.repository.SegRolesModulosRepository;
 import mx.gob.tecdmx.seguridad.repository.SegRolesRepository;
+import mx.gob.tecdmx.seguridad.security.config.UsuarioSecurityDTO;
 
 @Service
 public class ServiceAdmin {
@@ -34,10 +36,11 @@ public class ServiceAdmin {
 	@Autowired
 	ServiceMenu serviceMenu;
 
-	public DTOResponseAdmin getPermisosByRol(DTOResponseAdmin response, int idRol) {
+	public DTOResponseAdmin getPermisosByRol(DTOResponseAdmin response, int idRol, Authentication auth) {
 		ResponseBodyMenu acceso = new ResponseBodyMenu();
+		UsuarioSecurityDTO userSecurity = (UsuarioSecurityDTO) auth.getDetails();
 		// obtengo el rol
-		String nombreAplicativo = "Gestión Judicial Electoral";
+		String nombreAplicativo = userSecurity.getSys();
 		Optional<SegModulos> aplicacion = segModulosRepository.findByDescModulo(nombreAplicativo);
 		if (aplicacion.isPresent()) {
 			Optional<SegRoles> rol = segRolesRepository.findById(idRol);
@@ -73,7 +76,8 @@ public class ServiceAdmin {
 
 	}
 
-	public DTOResponseAdmin editarPermisosByRol(ResponseBodyMenu payload, DTOResponseAdmin response, int idRol) {
+	public DTOResponseAdmin editarPermisosByRol(ResponseBodyMenu payload, DTOResponseAdmin response, int idRol, Authentication auth ) {
+		UsuarioSecurityDTO userSecurity = (UsuarioSecurityDTO) auth.getDetails();
 		IDRolesModulos idRolModulo = null;
 		Optional<SegRolesModulos> rolToEdit = null;
 		Optional<SegModulos> aplicacion = segModulosRepository.findByDescModulo(payload.getAplicacion());
@@ -95,7 +99,7 @@ public class ServiceAdmin {
 						rolToEdit.get().setEditar(permiso.isEditar() ? "S" : "N");
 						rolToEdit.get().setEliminar(permiso.isEliminar() ? "S" : "N");
 						rolToEdit.get().setPublico(permiso.isPublico() ? "S" : "N");
-						rolToEdit.get().setSessionId(null);
+						rolToEdit.get().setSessionId(userSecurity.getIdSession());
 
 						segRolesModulosRepository.save(rolToEdit.get());
 					}
@@ -117,7 +121,7 @@ public class ServiceAdmin {
 								rolToEdit.get().setEditar(permiso.isEditar() ? "S" : "N");
 								rolToEdit.get().setEliminar(permiso.isEliminar() ? "S" : "N");
 								rolToEdit.get().setPublico(permiso.isPublico() ? "S" : "N");
-								rolToEdit.get().setSessionId(null);
+								rolToEdit.get().setSessionId(userSecurity.getIdSession());
 
 								segRolesModulosRepository.save(rolToEdit.get());
 							}
@@ -136,7 +140,8 @@ public class ServiceAdmin {
 		return response;
 	}
 
-	public DTOResponseAdmin crearRol(PayloadRol payload, DTOResponseAdmin response) {
+	public DTOResponseAdmin crearRol(PayloadRol payload, DTOResponseAdmin response,  Authentication auth) {
+		UsuarioSecurityDTO userSecurity = (UsuarioSecurityDTO) auth.getDetails();
 		Optional<SegRoles> rolExist = segRolesRepository.findByEtiquetaRol(payload.getCodigo());
 		if (rolExist.isPresent()) {
 			response.setStatus("Fail");
@@ -150,6 +155,7 @@ public class ServiceAdmin {
 				newRol.setDescripcion(payload.getDescripcion());
 				newRol.setRolPadreId(rolPadre.get());
 				newRol.setRecActivo(1);
+				newRol.getSessionId().setId(userSecurity.getIdSession());
 				segRolesRepository.save(newRol);
 
 				response.setStatus("Succes");
@@ -165,7 +171,8 @@ public class ServiceAdmin {
 		return response;
 	}
 
-	public DTOResponseAdmin asociarRolModulos(PayloadRolMenu payload, DTOResponseAdmin response) {
+	public DTOResponseAdmin asociarRolModulos(PayloadRolMenu payload, DTOResponseAdmin response, Authentication auth ) {
+		UsuarioSecurityDTO userSecurity = (UsuarioSecurityDTO) auth.getDetails();
 		int moduloId = 0;
 		if (payload.getCodigoRol() != null) {
 			Optional<SegRoles> rolExist = segRolesRepository.findByEtiquetaRol(payload.getCodigoRol());
@@ -187,7 +194,7 @@ public class ServiceAdmin {
 					rolToSave.setEditar(payload.getPermisos().isEditar() ? "S" : "N");
 					rolToSave.setEliminar(payload.getPermisos().isEliminar() ? "S" : "N");
 					rolToSave.setPublico(payload.getPermisos().isPublico() ? "S" : "N");
-//					rolToSave.setN_session_id(sesionExist.get().getId());
+					rolToSave.setSessionId(userSecurity.getIdSession());
 					segRolesModulosRepository.save(rolToSave);
 					
 					response.setStatus("Succes");
