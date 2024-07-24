@@ -14,7 +14,7 @@ import mx.gob.tecdmx.seguridad.entity.SegUsuarios;
 public interface SegUsuariosRepository extends CrudRepository<SegUsuarios, Integer> {
 	Optional<SegUsuarios> findBysEmail(String email);
     Optional<SegUsuarios> findBysToken(String resetToken);
-	Optional<SegUsuarios> findBysUsuario(String email);
-	List<SegUsuarios> findAllBysUsuario(String email);
+	Optional<SegUsuarios> findBysUsuario(String user);
+	//List<SegUsuarios> findAllBysUsuario(String email);
 	Page<SegUsuarios> findAll(Pageable pageable);
 }

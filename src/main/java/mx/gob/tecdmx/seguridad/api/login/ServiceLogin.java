@@ -41,14 +41,15 @@ public class ServiceLogin {
 
 	public DTOResponseLogin login(DTOPayloadLogin payload, HttpServletResponse response) {
 		DTOResponseLogin responseDto = new DTOResponseLogin();
-
-		Optional<SegUsuarios> credentials = SegUsuariosRepository.findBysEmail(payload.getEmail());
-
+		Optional<SegUsuarios> credentials = null;
+		//accesos por email
+		 credentials = SegUsuariosRepository.findBysEmail(payload.getEmail());
 		if (!credentials.isPresent()) {
-			List<SegUsuarios> credentialList = SegUsuariosRepository.findAllBysUsuario(payload.getEmail());
-			if (credentialList.size()<=0) {
+			////accesos por user
+			credentials = SegUsuariosRepository.findBysUsuario(payload.getEmail());
+			if (!credentials.isPresent()) {
 				responseDto.setStatus("failed");
-				responseDto.setMessage("El usuario o correo electrónico es incorrecto");
+				responseDto.setMessage("El usuario o correo electrónico no existe");
 				return responseDto;
 			}
 		}
@@ -102,7 +103,7 @@ public class ServiceLogin {
 
 		} else {
 			responseDto.setStatus("failed");
-			responseDto.setMessage("Autenticación fallida");
+			responseDto.setMessage("Autenticación fallida, contraseña incorrecta");
 		}
 
 		return responseDto;

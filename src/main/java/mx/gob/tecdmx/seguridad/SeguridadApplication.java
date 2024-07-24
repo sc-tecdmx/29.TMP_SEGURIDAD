@@ -67,7 +67,8 @@ public class SeguridadApplication extends SpringBootServletInitializer {
                             "/api/v1/create-menu",
                             "/api/v1/registrar-usuario-no-auth",
                             "/api/v1/login",
-                            "/api/v1/"
+                            "/api/v1/email/solicitud-reset-password",
+                            "/api/v1/email/reset-password"
                             )
                     .permitAll()
                     .anyRequest().authenticated()

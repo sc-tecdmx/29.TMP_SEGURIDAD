@@ -86,25 +86,42 @@ public class UsuarioService {
 		SegUsuarios usuarioStored = null;
 		Optional<SegCatEstadoUsuario> statusUsuario = segCatEstadoUsuarioRepository.findByDescripcion("Pendiente");
 		if (!usuarioEmail.isPresent()) {
+			Optional<SegUsuarios> usuarioUser = SegUsuariosRepository.findBysEmail(userDTO.getUsuario());
+			if(!usuarioUser.isPresent()) {
+				// Tabla usuario
+				SegUsuarios usuario = new SegUsuarios();
+				usuario.setsUsuario(userDTO.getUsuario());
+				usuario.setsContrasenia(serviceLogin.encryptPassword(userDTO.getContrasenia()));
+				usuario.setsDescUsuario(null);
+				usuario.setsEmail(userDTO.getEmail());
+				usuario.setnIdEstadoUsuario(statusUsuario.get());
+				usuario.setsToken(null);
+				usuarioStored = SegUsuariosRepository.save(usuario);
 
-			// Tabla usuario
-			SegUsuarios usuario = new SegUsuarios();
-			usuario.setsUsuario(userDTO.getUsuario());
-			usuario.setsContrasenia(serviceLogin.encryptPassword(userDTO.getContrasenia()));
-			usuario.setsDescUsuario(null);
-			usuario.setsEmail(userDTO.getEmail());
-			usuario.setnIdEstadoUsuario(statusUsuario.get());
-			usuario.setsToken(null);
-			usuarioStored = SegUsuariosRepository.save(usuario);
+				// Tabla usuario-estadoUsuario
+				SegUsuarioEstadoUsuario bitacoraEstatusUsuario = new SegUsuarioEstadoUsuario();
+				bitacoraEstatusUsuario.setIdUsuario(usuarioStored);
+				bitacoraEstatusUsuario.setIdEstadoUsuario(statusUsuario.get());
+				bitacoraEstatusUsuario.setFingerprintDispositivo(null);
+				bitacoraEstatusUsuario.setFechaStatus(new Date());
+				// NOTA: No se setea la sesión ya que no hay autenticación
+				SegUsuarioEstadoUsuarioRepository.save(bitacoraEstatusUsuario);
+			}else {
+				usuarioStored = usuarioUser.get() ;
+				Optional<SegModulos> modulo = segModulosRepository.findByCodigo(userDTO.getCodigoSistema());
 
-			// Tabla usuario-estadoUsuario
-			SegUsuarioEstadoUsuario bitacoraEstatusUsuario = new SegUsuarioEstadoUsuario();
-			bitacoraEstatusUsuario.setIdUsuario(usuarioStored);
-			bitacoraEstatusUsuario.setIdEstadoUsuario(statusUsuario.get());
-			bitacoraEstatusUsuario.setFingerprintDispositivo(null);
-			bitacoraEstatusUsuario.setFechaStatus(new Date());
-			// NOTA: No se setea la sesión ya que no hay autenticación
-			SegUsuarioEstadoUsuarioRepository.save(bitacoraEstatusUsuario);
+				IDUsuariosModulos usuModId = new IDUsuariosModulos();
+				usuModId.setNIdModulo(modulo.get().getId());
+				usuModId.setNIdUsuario(usuarioUser.get().getnIdUsuario());
+
+				Optional<SegUsuariosModulos> usuMod = segUsuariosModulosRepository.findById(usuModId);
+				if (usuMod.isPresent()) {
+					response.setMessage("Este nombre de usuario ya ha sido utilizado en este sistema");
+					response.setStatus("Fail");
+					response.setData(null);
+					return response;
+				}
+			}
 
 		} else {
 			usuarioStored = usuarioEmail.get();
@@ -123,11 +140,9 @@ public class UsuarioService {
 			}
 
 		}
-//
 		// almacena el Log del usuario
 		SegLogUsuario userLog = new SegLogUsuario();
 		userLog.setIdUsuario(usuarioStored);
-//				userLog.setN_session_id(sesionExist.get().getId());
 		userLog.setDSistema(new Date());
 		userLog.setBitacora("creado");
 		segLogUsuarioRepository.save(userLog);
@@ -145,6 +160,7 @@ public class UsuarioService {
 		return response;
 
 	}
+	
 
 	public DTOResponse userInfo(Authentication auth, DTOResponse response) {
 		UsuarioSecurityDTO usuarioVO = (UsuarioSecurityDTO) auth.getDetails();
