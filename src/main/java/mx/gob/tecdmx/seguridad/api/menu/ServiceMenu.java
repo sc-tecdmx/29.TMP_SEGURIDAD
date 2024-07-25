@@ -120,7 +120,7 @@ public class ServiceMenu {
 	
 	public List<PerfilDTO> getMenu(Authentication auth) {
 		UsuarioSecurityDTO usuario = (UsuarioSecurityDTO) auth.getDetails();
-		Optional<SegUsuarios> credentials = SegUsuariosRepository.findBysEmail(usuario.getEmail());
+		Optional<SegUsuarios> credentials = SegUsuariosRepository.findByEmail(usuario.getEmail());
 		ResponseBodyMenu acceso = new ResponseBodyMenu();
 		List<PerfilDTO> perfiles = null;
 		if (credentials.isPresent()) {

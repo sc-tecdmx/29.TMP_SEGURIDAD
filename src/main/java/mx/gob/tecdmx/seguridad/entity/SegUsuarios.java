@@ -24,7 +24,7 @@ public class SegUsuarios {
 	int  nIdUsuario;
   
 	@Column(name = "s_usuario")
-	String  sUsuario;
+	String  usuario;
   
 	@Column(name = "s_contrasenia")
 	String  sContrasenia;
@@ -33,7 +33,7 @@ public class SegUsuarios {
 	String  sDescUsuario;
   
 	@Column(name = "s_email")
-	String  sEmail;
+	String  email;
   
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="n_id_estado_usuario", referencedColumnName="n_id_estado_usuario")
@@ -50,12 +50,21 @@ public class SegUsuarios {
 		this.nIdUsuario = nIdUsuario;
 	}
 
-	public String getsUsuario() {
-		return sUsuario;
+
+	public String getUsuario() {
+		return usuario;
 	}
 
-	public void setsUsuario(String sUsuario) {
-		this.sUsuario = sUsuario;
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getsContrasenia() {
@@ -74,13 +83,6 @@ public class SegUsuarios {
 		this.sDescUsuario = sDescUsuario;
 	}
 
-	public String getsEmail() {
-		return sEmail;
-	}
-
-	public void setsEmail(String sEmail) {
-		this.sEmail = sEmail;
-	}
 
 	public SegCatEstadoUsuario getnIdEstadoUsuario() {
 		return nIdEstadoUsuario;

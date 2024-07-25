@@ -39,7 +39,7 @@ public class RestControllerRessetPassword {
 	public ResponseEntity<String> requestPasswordReset(@RequestBody DTOPayloadRessetPass payload) {
 		DTOResponse response = new DTOResponse();
 		SeguridadUtils utils = new SeguridadUtils();
-		SegUsuarios user = userRepository.findBysEmail(payload.getEmail())
+		SegUsuarios user = userRepository.findByEmail(payload.getEmail())
 				.orElseThrow(() -> new UsernameNotFoundException("El usuario no existe"));
 
 		String resetToken = UUID.randomUUID().toString();
@@ -47,7 +47,7 @@ public class RestControllerRessetPassword {
 		userRepository.save(user);
 
 		// Send email (Implement this in EmailService)
-		emailService.sendPasswordResetEmail(user.getsEmail(), resetToken);
+		emailService.sendPasswordResetEmail(user.getEmail(), resetToken);
 
 		response.setMessage("Se ha enviado un link para reestablecer la contraseña al correo electronico");
 		response.setStatus("Success");

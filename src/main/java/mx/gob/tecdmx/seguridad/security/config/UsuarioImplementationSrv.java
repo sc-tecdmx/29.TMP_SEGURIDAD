@@ -34,9 +34,9 @@ public class UsuarioImplementationSrv implements UserDetailsService {
 		String session = emailAndIdSession.split(":")[1];
 		int idSession = Integer.parseInt(session);
 		String sys = emailAndIdSession.split(":")[2];
-		Optional<SegUsuarios> credentials = segUsuariosRepository.findBysEmail(email);
+		Optional<SegUsuarios> credentials = segUsuariosRepository.findByEmail(email);
 		if (!credentials.isPresent()) {
-			credentials = segUsuariosRepository.findBysUsuario(email);
+			credentials = segUsuariosRepository.findByUsuario(email);
 			if (!credentials.isPresent()) {
 //				throw new UsernameNotFoundException(email);
 				return null;
@@ -48,8 +48,8 @@ public class UsuarioImplementationSrv implements UserDetailsService {
 		List<GrantedAuthority> roles = new ArrayList();
 		// Agregar aqui el rol o roles para esta aplicación.
 		// roles.add(new SimpleGrantedAuthority("ADMIN"));
-		UserDetails userDetail = new UsuarioSecurityDTO(user.getsUsuario(), user.getsContrasenia(), roles, user.getnIdUsuario(),
-				user.getsEmail(), idSession, sys);
+		UserDetails userDetail = new UsuarioSecurityDTO(user.getUsuario(), user.getsContrasenia(), roles, user.getnIdUsuario(),
+				user.getEmail(), idSession, sys);
 
 		return userDetail;
 	}

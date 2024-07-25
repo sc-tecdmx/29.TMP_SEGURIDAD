@@ -1,15 +1,23 @@
 package mx.gob.tecdmx.seguridad.api.usuario;
 
-public class DTOUsuario {
+import java.util.List;
+
+public class DTOPayloadUsuario {
+	
 	int idUsuario;
 	String usuario;
 	String contrasenia;
-	String estatusCuenta;
-	String codigoRol;
-	String rolAnterior;
+	Integer statusCuenta;
+	List<String> codigoRol;
 	String email;
 	String codigoSistema;
 	
+	public int getIdUsuario() {
+		return idUsuario;
+	}
+	public void setIdUsuario(int idUsuario) {
+		this.idUsuario = idUsuario;
+	}
 	public String getUsuario() {
 		return usuario;
 	}
@@ -22,16 +30,17 @@ public class DTOUsuario {
 	public void setContrasenia(String contrasenia) {
 		this.contrasenia = contrasenia;
 	}
-	public String getEstatusCuenta() {
-		return estatusCuenta;
+	
+	public Integer getStatusCuenta() {
+		return statusCuenta;
 	}
-	public void setEstatusCuenta(String estatusCuenta) {
-		this.estatusCuenta = estatusCuenta;
+	public void setStatusCuenta(Integer statusCuenta) {
+		this.statusCuenta = statusCuenta;
 	}
-	public String getCodigoRol() {
+	public List<String> getCodigoRol() {
 		return codigoRol;
 	}
-	public void setCodigoRol(String codigoRol) {
+	public void setCodigoRol(List<String> codigoRol) {
 		this.codigoRol = codigoRol;
 	}
 	public String getEmail() {
@@ -40,26 +49,11 @@ public class DTOUsuario {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getRolAnterior() {
-		return rolAnterior;
-	}
-	public void setRolAnterior(String rolAnterior) {
-		this.rolAnterior = rolAnterior;
-	}
-
 	public String getCodigoSistema() {
 		return codigoSistema;
 	}
 	public void setCodigoSistema(String codigoSistema) {
 		this.codigoSistema = codigoSistema;
 	}
-	public int getIdUsuario() {
-		return idUsuario;
-	}
-	public void setIdUsuario(int idUsuario) {
-		this.idUsuario = idUsuario;
-	}
-	
-	
 	
 }

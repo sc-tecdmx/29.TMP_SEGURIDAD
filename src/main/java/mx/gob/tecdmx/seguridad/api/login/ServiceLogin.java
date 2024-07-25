@@ -43,10 +43,10 @@ public class ServiceLogin {
 		DTOResponseLogin responseDto = new DTOResponseLogin();
 		Optional<SegUsuarios> credentials = null;
 		//accesos por email
-		 credentials = SegUsuariosRepository.findBysEmail(payload.getEmail());
+		 credentials = SegUsuariosRepository.findByEmail(payload.getEmail());
 		if (!credentials.isPresent()) {
 			////accesos por user
-			credentials = SegUsuariosRepository.findBysUsuario(payload.getEmail());
+			credentials = SegUsuariosRepository.findByUsuario(payload.getEmail());
 			if (!credentials.isPresent()) {
 				responseDto.setStatus("failed");
 				responseDto.setMessage("El usuario o correo electrónico no existe");
@@ -79,7 +79,7 @@ public class ServiceLogin {
 			Map<String, Object> claims = new HashMap<>();
 		    claims.put("iat", new Date());
 		    claims.put("iss", Constants.ISSUER_INFO);
-		    claims.put("sub", credentials.get().getsEmail());
+		    claims.put("sub", credentials.get().getEmail());
 		    claims.put("jti", lastSesionGuardada.getId());
 		    claims.put("exp", new Date(System.currentTimeMillis() + Constants.TOKEN_EXPIRATION_TIME));
 		    claims.put("sys", payload.getSys());
@@ -93,8 +93,8 @@ public class ServiceLogin {
 //					.setExpiration(new Date(System.currentTimeMillis() + Constants.TOKEN_EXPIRATION_TIME))
 					.setClaims(claims)
 					.signWith(SignatureAlgorithm.HS512, Constants.SUPER_SECRET_KEY).compact();
-			response.addHeader("email", credentials.get().getsEmail());
-			response.addHeader("nombre", credentials.get().getsUsuario());
+			response.addHeader("email", credentials.get().getEmail());
+			response.addHeader("nombre", credentials.get().getUsuario());
 			response.addHeader(Constants.HEADER_AUTHORIZACION_KEY, Constants.TOKEN_BEARER_PREFIX + " " + token);
 
 			responseDto.setStatus("success");
@@ -130,7 +130,7 @@ public class ServiceLogin {
 	
 	public DTOResponseLogin updatePassword(DTOPayloadLogin payload) {
 		DTOResponseLogin responseDto = new DTOResponseLogin();
-		Optional<SegUsuarios> credentials = SegUsuariosRepository.findBysEmail(payload.getEmail());
+		Optional<SegUsuarios> credentials = SegUsuariosRepository.findByEmail(payload.getEmail());
 		if (credentials.isPresent()) {
 			credentials.get().setsContrasenia(bCryptPasswordEncoder.encode(payload.getPassword()));
 			SegUsuariosRepository.save(credentials.get());

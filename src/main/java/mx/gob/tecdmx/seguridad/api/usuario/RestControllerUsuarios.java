@@ -25,17 +25,17 @@ public class RestControllerUsuarios {
 	@CrossOrigin()
 	@RequestMapping(method = RequestMethod.POST, path = "/registrar-usuario-no-auth", produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<String> createUsuario(@RequestBody DTOUsuario user) {
+	public ResponseEntity<String> createUsuario(@RequestBody DTOPayloadUsuario user) {
 		MetodosUtils utils = new MetodosUtils();
 		DTOResponse response = new DTOResponse();
-		usuarioService.createUserNoAuth(user, response);
+		usuarioService.createUser(user, response);
 		return ResponseEntity.ok().header(null).body(utils.objectToJson(response));
 	}
 	
 	@CrossOrigin()
 	@RequestMapping(method = RequestMethod.POST, path = "/user-rol-moduls", produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<String> UsuarioRolModulo(@RequestBody DTOUsuario user, Authentication auth) {
+	public ResponseEntity<String> UsuarioRolModulo(@RequestBody DTOPayloadUsuario user, Authentication auth) {
 		MetodosUtils utils = new MetodosUtils();
 		DTOResponse response = new DTOResponse();
 		usuarioService.rolAndModulosByUser(user, response, auth);
