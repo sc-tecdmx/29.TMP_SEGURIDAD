@@ -36,7 +36,7 @@ public class RestControllerLogin {
 	@CrossOrigin()
 	@RequestMapping(method = RequestMethod.PUT, path = "/update-password", produces = "application/json")
 	@ResponseBody
-	public DTOResponseLogin updatePassword(@RequestBody DTOPayloadLogin payload) {
-		return loginService.updatePassword(payload);
+	public DTOResponseLogin updatePassword(@RequestBody DTOPayloadLogin payload, Authentication auth) {
+		return loginService.updatePassword(payload, auth);
 	}
 }

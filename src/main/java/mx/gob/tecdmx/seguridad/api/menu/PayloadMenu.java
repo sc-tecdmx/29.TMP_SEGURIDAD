@@ -2,6 +2,8 @@ package mx.gob.tecdmx.seguridad.api.menu;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PayloadMenu {
 	
 	String nivelModulo;
@@ -9,6 +11,7 @@ public class PayloadMenu {
 	String codigo;
 	String url;
 	int pos;
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	List<PayloadMenu> modulos;
 	List<DTOPermisos> permisos;
 	

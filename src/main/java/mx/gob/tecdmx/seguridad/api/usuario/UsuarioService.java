@@ -215,7 +215,7 @@ public class UsuarioService {
 
 	public DTOResponse userInfo(Authentication auth, DTOResponse response) {
 		UsuarioSecurityDTO usuarioVO = (UsuarioSecurityDTO) auth.getDetails();
-		Optional<SegUsuarios> usuario = SegUsuariosRepository.findByEmail(usuarioVO.getEmail());
+		Optional<SegUsuarios> usuario = SegUsuariosRepository.findById(usuarioVO.getIdUsuario());
 		if (usuario.isPresent()) {
 			DTOUserInfo userInfo = new DTOUserInfo();
 			userInfo.setUsuario(usuario.get().getUsuario());
@@ -272,6 +272,10 @@ public class UsuarioService {
 		SegUsuarios usuarioStored = null;
 		List<String> codigoRol = new ArrayList<String>();
 		UsuarioSecurityDTO userSecurity = (UsuarioSecurityDTO) auth.getDetails();
+		if(userSecurity==null) {
+			response.setMessage("No cuenta con permisos para realizar esta acción");
+			return response;
+		}
 		// verifica que el correo a utilizar no se encuentre en la bd de usuarios
 		Optional<SegUsuarios> usuarioExist = SegUsuariosRepository.findByUsuario(userDTO.getUsuario());
 		if (usuarioExist.isPresent()) {

@@ -111,6 +111,9 @@ public class ServiceLogin {
 
 	public boolean logout(Authentication auth) {
 		UsuarioSecurityDTO usuarioVO = (UsuarioSecurityDTO) auth.getDetails();
+		if(usuarioVO==null) {
+			return false;
+		}
 		Optional<SegLogSesion> sesionExist =SegLogSesionRepository.findById(usuarioVO.getIdSession());
 		if(sesionExist.isPresent()) {
 			
@@ -128,15 +131,17 @@ public class ServiceLogin {
 		
 	}
 	
-	public DTOResponseLogin updatePassword(DTOPayloadLogin payload) {
+	public DTOResponseLogin updatePassword(DTOPayloadLogin payload, Authentication auth) {
 		DTOResponseLogin responseDto = new DTOResponseLogin();
-		Optional<SegUsuarios> credentials = SegUsuariosRepository.findByEmail(payload.getEmail());
+		UsuarioSecurityDTO usuarioVO = (UsuarioSecurityDTO) auth.getDetails();
+		
+		Optional<SegUsuarios> credentials = SegUsuariosRepository.findById(usuarioVO.getIdUsuario());
 		if (credentials.isPresent()) {
 			credentials.get().setsContrasenia(bCryptPasswordEncoder.encode(payload.getPassword()));
 			SegUsuariosRepository.save(credentials.get());
 			responseDto.setStatus("La contraseña se ha actualizado satisfactoriamente");
 		} else {
-			responseDto.setStatus("El usuario ingresado no se encuentra registrado");
+			responseDto.setStatus("No se pudo realizar la actualización, el Usuario no existe");
 		}
 		return responseDto;
 	}

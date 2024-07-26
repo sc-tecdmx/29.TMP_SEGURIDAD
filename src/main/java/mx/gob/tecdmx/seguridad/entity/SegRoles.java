@@ -14,7 +14,8 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter
+@Setter
 @Entity
 @Table(name = "seg_roles", schema = "public")
 public class SegRoles {
@@ -22,24 +23,27 @@ public class SegRoles {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Basic(optional = false)
 	@Column(name = "n_id_rol", unique = true)
-	int  id;
-  
+	int id;
+
 	@Column(name = "s_etiqueta_rol")
-	String  etiquetaRol;
-  
+	String etiquetaRol;
+
 	@Column(name = "s_descripcion")
-	String  descripcion;
-  
+	String descripcion;
+
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="n_id_rol_padre", referencedColumnName="n_id_rol")
-	SegRoles  rolPadreId;
-  
+	@JoinColumn(name = "n_id_rol_padre", referencedColumnName = "n_id_rol")
+	SegRoles rolPadreId;
+
 	@Column(name = "n_rec_activo")
-	int  recActivo;
-  
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="n_session_id", referencedColumnName="n_session_id")
-	SegLogSesion  sessionId;
+	int recActivo;
+
+	// @ManyToOne(fetch = FetchType.LAZY)
+	// @JoinColumn(name="n_session_id", referencedColumnName="n_session_id")
+	// SegLogSesion sessionId;
+
+	@Column(name = "n_session_id")
+	Integer sessionId;
 
 	public int getId() {
 		return id;
@@ -81,14 +85,12 @@ public class SegRoles {
 		this.recActivo = recActivo;
 	}
 
-	public SegLogSesion getSessionId() {
+	public Integer getSessionId() {
 		return sessionId;
 	}
 
-	public void setSessionId(SegLogSesion sessionId) {
+	public void setSessionId(Integer sessionId) {
 		this.sessionId = sessionId;
 	}
 
-	
-	
 }

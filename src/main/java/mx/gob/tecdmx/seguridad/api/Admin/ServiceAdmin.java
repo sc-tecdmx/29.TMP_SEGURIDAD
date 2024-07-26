@@ -78,6 +78,10 @@ public class ServiceAdmin {
 
 	public DTOResponseAdmin editarPermisosByRol(ResponseBodyMenu payload, DTOResponseAdmin response, int idRol, Authentication auth ) {
 		UsuarioSecurityDTO userSecurity = (UsuarioSecurityDTO) auth.getDetails();
+		if(userSecurity==null) {
+			response.setMessage("No cuenta con permisos para realizar esta acción");
+			return response;
+		}
 		IDRolesModulos idRolModulo = null;
 		Optional<SegRolesModulos> rolToEdit = null;
 		Optional<SegModulos> aplicacion = segModulosRepository.findByDescModulo(payload.getAplicacion());
@@ -142,6 +146,11 @@ public class ServiceAdmin {
 
 	public DTOResponseAdmin crearRol(PayloadRol payload, DTOResponseAdmin response,  Authentication auth) {
 		UsuarioSecurityDTO userSecurity = (UsuarioSecurityDTO) auth.getDetails();
+		if(userSecurity==null) {
+			response.setMessage("No cuenta con permisos para realizar esta acción");
+			return response;
+		}
+		
 		Optional<SegRoles> rolExist = segRolesRepository.findByEtiquetaRol(payload.getCodigo());
 		if (rolExist.isPresent()) {
 			response.setStatus("Fail");
@@ -155,7 +164,7 @@ public class ServiceAdmin {
 				newRol.setDescripcion(payload.getDescripcion());
 				newRol.setRolPadreId(rolPadre.get());
 				newRol.setRecActivo(1);
-				newRol.getSessionId().setId(userSecurity.getIdSession());
+				newRol.setSessionId(userSecurity.getIdSession());
 				segRolesRepository.save(newRol);
 
 				response.setStatus("Succes");
@@ -173,6 +182,10 @@ public class ServiceAdmin {
 
 	public DTOResponseAdmin asociarRolModulos(PayloadRolMenu payload, DTOResponseAdmin response, Authentication auth ) {
 		UsuarioSecurityDTO userSecurity = (UsuarioSecurityDTO) auth.getDetails();
+		if(userSecurity==null) {
+			response.setMessage("No cuenta con permisos para realizar esta acción");
+			return response;
+		}
 		int moduloId = 0;
 		if (payload.getCodigoRol() != null) {
 			Optional<SegRoles> rolExist = segRolesRepository.findByEtiquetaRol(payload.getCodigoRol());

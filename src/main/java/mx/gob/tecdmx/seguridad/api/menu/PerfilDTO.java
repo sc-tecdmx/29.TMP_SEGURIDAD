@@ -1,5 +1,8 @@
 package mx.gob.tecdmx.seguridad.api.menu;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PerfilDTO {
 	
 	String perfil;

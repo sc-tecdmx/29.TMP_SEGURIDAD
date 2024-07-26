@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import mx.gob.tecdmx.seguridad.utils.DTOResponse;
-import mx.gob.tecdmx.seguridad.utils.MetodosUtils;
+import mx.gob.tecdmx.seguridad.utils.SeguridadUtils;
 
 
 @RestController
@@ -26,7 +26,7 @@ public class RestControllerUsuarios {
 	@RequestMapping(method = RequestMethod.POST, path = "/registrar-usuario-no-auth", produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<String> createUsuario(@RequestBody DTOPayloadUsuario user) {
-		MetodosUtils utils = new MetodosUtils();
+		SeguridadUtils utils = new SeguridadUtils();
 		DTOResponse response = new DTOResponse();
 		usuarioService.createUser(user, response);
 		return ResponseEntity.ok().header(null).body(utils.objectToJson(response));
@@ -36,7 +36,7 @@ public class RestControllerUsuarios {
 	@RequestMapping(method = RequestMethod.POST, path = "/user-rol-moduls", produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<String> UsuarioRolModulo(@RequestBody DTOPayloadUsuario user, Authentication auth) {
-		MetodosUtils utils = new MetodosUtils();
+		SeguridadUtils utils = new SeguridadUtils();
 		DTOResponse response = new DTOResponse();
 		usuarioService.rolAndModulosByUser(user, response, auth);
 		return ResponseEntity.ok().header(null).body(utils.objectToJson(response));

@@ -16,7 +16,7 @@ public class DTOUserInfo {
 	String apellido1;
 	String apellido2;
 	int idUsuario;
-	int idEmpleado;
+//	int idEmpleado;
 	List<PerfilDTO> perfiles;
 	String aplicacion;
 	String statusCuenta;
@@ -56,12 +56,6 @@ public class DTOUserInfo {
 	}
 	public void setIdUsuario(int idUsuario) {
 		this.idUsuario = idUsuario;
-	}
-	public int getIdEmpleado() {
-		return idEmpleado;
-	}
-	public void setIdEmpleado(int idEmpleado) {
-		this.idEmpleado = idEmpleado;
 	}
 	public List<PerfilDTO> getPerfiles() {
 		return perfiles;

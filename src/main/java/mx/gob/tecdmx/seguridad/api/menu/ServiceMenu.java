@@ -11,23 +11,24 @@ import org.springframework.stereotype.Service;
 
 import mx.gob.tecdmx.seguridad.entity.SegCatNivelModulo;
 import mx.gob.tecdmx.seguridad.entity.SegModulos;
-import mx.gob.tecdmx.seguridad.entity.SegRoles;
 import mx.gob.tecdmx.seguridad.entity.SegRolesModulos;
 import mx.gob.tecdmx.seguridad.entity.SegRolesUsuarios;
 import mx.gob.tecdmx.seguridad.entity.SegUsuarios;
+import mx.gob.tecdmx.seguridad.entity.SegUsuariosModulos;
 import mx.gob.tecdmx.seguridad.repository.SegCatNivelModuloRepository;
 import mx.gob.tecdmx.seguridad.repository.SegLogSesionRepository;
 import mx.gob.tecdmx.seguridad.repository.SegModulosRepository;
 import mx.gob.tecdmx.seguridad.repository.SegRolesModulosRepository;
 import mx.gob.tecdmx.seguridad.repository.SegRolesRepository;
 import mx.gob.tecdmx.seguridad.repository.SegRolesUsuariosRepository;
+import mx.gob.tecdmx.seguridad.repository.SegUsuariosModulosRepository;
 import mx.gob.tecdmx.seguridad.repository.SegUsuariosRepository;
 import mx.gob.tecdmx.seguridad.security.config.UsuarioSecurityDTO;
 import mx.gob.tecdmx.seguridad.utils.DTOResponse;
 
 @Service
 public class ServiceMenu {
-
+	
 	@Autowired
 	private SegUsuariosRepository SegUsuariosRepository;
 
@@ -49,8 +50,7 @@ public class ServiceMenu {
 	@Autowired
 	SegLogSesionRepository SegLogSesionRepository;
 
-	@Value("${spring.application.name}")
-	private String nombreAplicativo;
+	
 
 	public List<PayloadMenu> fillMenu(List<SegRolesModulos> rolesModulos, List<PayloadMenu> menu, int parentId) {
 		PayloadMenu menuChild = null;
@@ -85,8 +85,8 @@ public class ServiceMenu {
 	}
 
 	public List<PerfilDTO> getMenu(ResponseBodyMenu acceso, SegUsuarios usuario, String sys) {
+		//aqui se debe buscar los roles de usuario por sistema
 		List<SegRolesUsuarios> rolesUsuario = SegRolesUsuariosRepository.findByIdUsuario(usuario);
-		List<ResponseBodyMenu> accsesosRolesPeril = new ArrayList<ResponseBodyMenu>();
 		List<PerfilDTO> perfiles = new ArrayList<PerfilDTO>();
 
 		// Buscar los menus a los que tiene acceso en una determinada aplicación
@@ -94,7 +94,7 @@ public class ServiceMenu {
 			acceso = new ResponseBodyMenu();
 
 			// Se devuelve siempre y cuando se se encuentre activo
-			List<SegRolesModulos> rolesModulos = SegRolesModulosRepository.findBySegRoles(usuarioRol.getIdRol());
+			List<SegRolesModulos> rolesModulos = SegRolesModulosRepository.findBynIdRol(usuarioRol.getIdRol().getId());
 			List<PayloadMenu> menu = new ArrayList<PayloadMenu>();
 			for (SegRolesModulos rolMod : rolesModulos) {
 				if (rolMod.getSegModulos().getDescModulo().equals(sys)
@@ -110,14 +110,12 @@ public class ServiceMenu {
 			}
 
 			PerfilDTO perfil = new PerfilDTO();
-			perfil.setPerfil("INTERNO");
 			perfil.setMenu(acceso);
 			perfiles.add(perfil);
 		}
 		return perfiles;
 	}
 
-	
 	public List<PerfilDTO> getMenu(Authentication auth) {
 		UsuarioSecurityDTO usuario = (UsuarioSecurityDTO) auth.getDetails();
 		Optional<SegUsuarios> credentials = SegUsuariosRepository.findByEmail(usuario.getEmail());
@@ -141,15 +139,6 @@ public class ServiceMenu {
 		SegCatNivelModulo nivelModulo = findNivel(payload.getNivelModulo());
 		if (nivelModulo == null) {
 			return false;
-		}
-		if (payload.getCodigo() == null) {
-			return false;
-		} else {
-			Optional<SegModulos> moduloExist = SegModulosRepository.findByCodigo(payload.getCodigo());
-			if (moduloExist.isPresent()) {
-				// retorna un objeto vacío por que ya existe esa aplicación
-				return false;
-			}
 		}
 
 		if (payload.getModulos() != null) {
@@ -211,11 +200,23 @@ public class ServiceMenu {
 		boolean hasNivel = validateNivelAndPermisos(payload);
 
 		if (!hasNivel) {
-			response.setMessage("El/Los nivel(es) especificado(s) no existe(n) o el modulo a registrar ya existe");
+			response.setMessage("El/Los nivel(es) especificado(s) no existe(n)");
 			response.setStatus("Fail");
 			return response;
 		}
 
+		if (payload.getCodigo() == null) {
+			response.setMessage("El código de menú ingresado no existe");
+			response.setStatus("Fail");
+			return response;
+		} else {
+			Optional<SegModulos> moduloExist = SegModulosRepository.findByCodigo(payload.getCodigo());
+			if (moduloExist.isPresent()) {
+				response.setMessage("El sistema que deseas registrar ya existe");
+				response.setStatus("Fail");
+				return response;
+			}
+		}
 		SegModulos moduloStored = storeMenu(payload, 1, null, response);
 		if (moduloStored != null) {
 			response.setMessage("EL menú se ha guardado exitósamente");
