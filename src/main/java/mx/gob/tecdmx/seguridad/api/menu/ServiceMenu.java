@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +13,12 @@ import mx.gob.tecdmx.seguridad.entity.SegModulos;
 import mx.gob.tecdmx.seguridad.entity.SegRolesModulos;
 import mx.gob.tecdmx.seguridad.entity.SegRolesUsuarios;
 import mx.gob.tecdmx.seguridad.entity.SegUsuarios;
-import mx.gob.tecdmx.seguridad.entity.SegUsuariosModulos;
 import mx.gob.tecdmx.seguridad.repository.SegCatNivelModuloRepository;
 import mx.gob.tecdmx.seguridad.repository.SegLogSesionRepository;
 import mx.gob.tecdmx.seguridad.repository.SegModulosRepository;
 import mx.gob.tecdmx.seguridad.repository.SegRolesModulosRepository;
 import mx.gob.tecdmx.seguridad.repository.SegRolesRepository;
 import mx.gob.tecdmx.seguridad.repository.SegRolesUsuariosRepository;
-import mx.gob.tecdmx.seguridad.repository.SegUsuariosModulosRepository;
 import mx.gob.tecdmx.seguridad.repository.SegUsuariosRepository;
 import mx.gob.tecdmx.seguridad.security.config.UsuarioSecurityDTO;
 import mx.gob.tecdmx.seguridad.utils.DTOResponse;
@@ -59,6 +56,7 @@ public class ServiceMenu {
 			if (rolMod.getSegModulos().getNIdModuloPadre().getId() == parentId) {
 				menuChild = new PayloadMenu();
 				permisos = new DTOPermisos();
+				menuChild.setIdModulo(rolMod.getnIdModulo());
 				menuChild.setNombreModulo(rolMod.getSegModulos().getDescModulo());
 				menuChild.setPos(rolMod.getSegModulos().getMenuPos());
 				menuChild.setCodigo(rolMod.getSegModulos().getCodigo());
@@ -67,6 +65,7 @@ public class ServiceMenu {
 				permisos.setEditar(rolMod.getEditar().equals("S") ? true : false);
 				permisos.setEliminar(rolMod.getEliminar().equals("S") ? true : false);
 				permisos.setLeer(rolMod.getLeer().equals("S") ? true : false);
+				
 //				permisos.setCodigoRol(rolMod.getSegRoles().getEtiquetaRol());
 
 				List<DTOPermisos> permisosList = new ArrayList<DTOPermisos>();
@@ -88,7 +87,7 @@ public class ServiceMenu {
 		//aqui se debe buscar los roles de usuario por sistema
 		List<SegRolesUsuarios> rolesUsuario = SegRolesUsuariosRepository.findByIdUsuario(usuario);
 		List<PerfilDTO> perfiles = new ArrayList<PerfilDTO>();
-
+		Optional<SegModulos> sistema = SegModulosRepository.findByCodigo(sys);
 		// Buscar los menus a los que tiene acceso en una determinada aplicación
 		for (SegRolesUsuarios usuarioRol : rolesUsuario) {
 			acceso = new ResponseBodyMenu();
@@ -97,7 +96,7 @@ public class ServiceMenu {
 			List<SegRolesModulos> rolesModulos = SegRolesModulosRepository.findBynIdRol(usuarioRol.getIdRol().getId());
 			List<PayloadMenu> menu = new ArrayList<PayloadMenu>();
 			for (SegRolesModulos rolMod : rolesModulos) {
-				if (rolMod.getSegModulos().getDescModulo().equals(sys)
+				if (rolMod.getSegModulos().getDescModulo().equals(sistema.get().getDescModulo())
 						&& rolMod.getSegModulos().getNIdNivel().getDescNivel().equals("Aplicación")) {
 					acceso.setAplicacion(rolMod.getSegModulos().getDescModulo());
 					int idAplicacion = rolMod.getSegModulos().getId();
@@ -226,6 +225,107 @@ public class ServiceMenu {
 			response.setStatus("Fail");
 		}
 		return response;
+	}
+
+	public DTOResponse createModulo(PayloadMenu payload, DTOResponse response) {
+		boolean hasNivel = validateNivelAndPermisos(payload);
+		
+		if (!hasNivel) {
+			response.setMessage("El nivel especificado no existe");
+			response.setStatus("Fail");
+			return response;
+		}
+		if (payload.getCodigo() == null) {
+			response.setMessage("Ingresa un código para el módulo a registrar");
+			response.setStatus("Fail");
+			return response;
+		} else {
+			Optional<SegModulos> moduloExist = SegModulosRepository.findByCodigo(payload.getCodigo());
+			if (moduloExist.isPresent()) {
+				response.setMessage("El código "+payload.getCodigo()+" que deseas registrar ya existe para otro módulo");
+				response.setStatus("Fail");
+				return response;
+			}
+		}
+		if(payload.getPadreId()==0) {
+			payload.setPadreId(-1);	
+		}
+		if(payload.getPos()==0) {
+			if(payload.getPadreId()==-1) {
+				payload.setPos(1);	
+			}else {
+				Optional<SegModulos> moduloPadre = SegModulosRepository.findById(payload.getPadreId()); 
+				if(moduloPadre.get() != null) {
+					List<SegModulos> modulosHijos = SegModulosRepository.findBynIdModuloPadre(moduloPadre.get());
+					if(modulosHijos.size()<=0) {
+						payload.setPos(1);
+					}else {
+						payload.setPos(modulosHijos.size()+1);
+					}
+				}
+				
+			}
+		}
+		//se inicia el guardado del módulo
+		SegModulos moduloStored = storeModulo(payload, response);
+		if (moduloStored != null) {
+			response.setMessage("EL módulo se ha guardado exitósamente");
+			response.setStatus("Success");
+		} else {
+			response.setMessage("No fue posible crear el módulo");
+			response.setStatus("Fail");
+		}
+		return response;
+		
+	}
+	
+	public SegModulos storeModulo(PayloadMenu payload, DTOResponse response) {
+		
+		SegModulos newModulo = null;
+
+		SegModulos modulo = new SegModulos();
+
+		SegCatNivelModulo nivelModulo = findNivel(payload.getNivelModulo());
+
+		modulo.setNIdNivel(nivelModulo);
+		modulo.setDescModulo(payload.getNombreModulo());
+		modulo.setCodigo(payload.getCodigo());
+
+		if (payload.getNivelModulo().equals("Aplicación")) {
+			Optional<SegModulos> moduloNoParent = SegModulosRepository.findById(-1);
+			modulo.setNIdModuloPadre(moduloNoParent.get());
+			modulo.setMenu("N");
+			modulo.setMenuUrl(payload.getUrl());
+			modulo.setMenuPos(1);
+
+		} else {
+			Optional<SegModulos> moduloParent = SegModulosRepository.findById(payload.getPadreId());
+			modulo.setNIdModuloPadre(moduloParent.get());
+			modulo.setMenu("S");
+			modulo.setMenuUrl(payload.getUrl());
+			modulo.setMenuPos(payload.getPos());
+
+		}
+
+		newModulo = SegModulosRepository.save(modulo);
+		
+		response.setData(newModulo);
+		return newModulo;
+	}
+
+	public PayloadMenu getModulo(PayloadMenu response, int idModulo) {
+		Optional<SegModulos> moduloExist = SegModulosRepository.findById(idModulo);
+		if(moduloExist.isPresent()) {
+			response.setIdModulo(moduloExist.get().getId());
+			response.setCodigo(moduloExist.get().getCodigo());
+			response.setNivelModulo(moduloExist.get().getnIdNivel().getDescNivel());
+			response.setNombreModulo(moduloExist.get().getDescModulo());
+			response.setUrl(moduloExist.get().getMenuUrl());
+			response.setPadreId(moduloExist.get().getnIdModuloPadre().getId());
+			return response;
+		}
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,6 +30,16 @@ public class RestControllerUsuarios {
 		SeguridadUtils utils = new SeguridadUtils();
 		DTOResponse response = new DTOResponse();
 		usuarioService.createUser(user, response);
+		return ResponseEntity.ok().header(null).body(utils.objectToJson(response));
+	}
+	
+	@CrossOrigin()
+	@RequestMapping(method = RequestMethod.PUT, path = "/editar-usuario/{idUsuario}", produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<String> editarUsuario(@RequestBody DTOPayloadUsuario user, @PathVariable("idUsuario") int idUsuario, Authentication auth) {
+		SeguridadUtils utils = new SeguridadUtils();
+		DTOResponse response = new DTOResponse();
+		usuarioService.editarUsuario(user, idUsuario, response, auth);
 		return ResponseEntity.ok().header(null).body(utils.objectToJson(response));
 	}
 	

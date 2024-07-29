@@ -1,17 +1,15 @@
 package mx.gob.tecdmx.seguridad.api.menu;
 
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PayloadMenu {
-	
+	int idModulo;
 	String nivelModulo;
 	String nombreModulo;
 	String codigo;
 	String url;
 	int pos;
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	int padreId;
+	
 	List<PayloadMenu> modulos;
 	List<DTOPermisos> permisos;
 	
@@ -57,7 +55,18 @@ public class PayloadMenu {
 	public void setPermisos(List<DTOPermisos> permisos) {
 		this.permisos = permisos;
 	}
+	public int getPadreId() {
+		return padreId;
+	}
+	public void setPadreId(int padreId) {
+		this.padreId = padreId;
+	}
+	public int getIdModulo() {
+		return idModulo;
+	}
+	public void setIdModulo(int idModulo) {
+		this.idModulo = idModulo;
+	}
 	
-	
-	
+
 }

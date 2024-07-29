@@ -2,7 +2,6 @@ package mx.gob.tecdmx.seguridad.api.login;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -16,8 +15,10 @@ import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import mx.gob.tecdmx.seguridad.entity.SegLogSesion;
+import mx.gob.tecdmx.seguridad.entity.SegModulos;
 import mx.gob.tecdmx.seguridad.entity.SegUsuarios;
 import mx.gob.tecdmx.seguridad.repository.SegLogSesionRepository;
+import mx.gob.tecdmx.seguridad.repository.SegModulosRepository;
 import mx.gob.tecdmx.seguridad.repository.SegUsuariosRepository;
 import mx.gob.tecdmx.seguridad.security.config.Constants;
 import mx.gob.tecdmx.seguridad.security.config.UsuarioSecurityDTO;
@@ -33,6 +34,9 @@ public class ServiceLogin {
 
 	@Autowired
 	SegLogSesionRepository SegLogSesionRepository;
+	
+	@Autowired
+	SegModulosRepository SegModulosRepository;
 
 	public String encryptPassword(String password) {
 		String newPassword = bCryptPasswordEncoder.encode(password);
@@ -48,7 +52,7 @@ public class ServiceLogin {
 			////accesos por user
 			credentials = SegUsuariosRepository.findByUsuario(payload.getEmail());
 			if (!credentials.isPresent()) {
-				responseDto.setStatus("failed");
+				responseDto.setStatus("Fail");
 				responseDto.setMessage("El usuario o correo electrónico no existe");
 				return responseDto;
 			}
@@ -76,13 +80,18 @@ public class ServiceLogin {
 
 		boolean coincide = bCryptPasswordEncoder.matches(payload.getPassword(), credentials.get().getsContrasenia());
 		if (coincide) {
+			Optional<SegModulos> moduloExist = SegModulosRepository.findByCodigo(payload.getSys());
+			if(moduloExist== null) {
+				responseDto.setStatus("Fail");
+				responseDto.setMessage("Autenticación fallida, no fue posible iniciar sesión");
+			}
 			Map<String, Object> claims = new HashMap<>();
 		    claims.put("iat", new Date());
 		    claims.put("iss", Constants.ISSUER_INFO);
 		    claims.put("sub", credentials.get().getEmail());
 		    claims.put("jti", lastSesionGuardada.getId());
 		    claims.put("exp", new Date(System.currentTimeMillis() + Constants.TOKEN_EXPIRATION_TIME));
-		    claims.put("sys", payload.getSys());
+		    claims.put("sys", moduloExist.get().getDescModulo());
 		    
 			String token = Jwts.builder()
 					
@@ -102,7 +111,7 @@ public class ServiceLogin {
 			responseDto.setToken(token);
 
 		} else {
-			responseDto.setStatus("failed");
+			responseDto.setStatus("Fail");
 			responseDto.setMessage("Autenticación fallida, contraseña incorrecta");
 		}
 

@@ -83,7 +83,7 @@ public class UsuarioService {
 		// almacena el Log del usuario
 		SegLogUsuario userLog = new SegLogUsuario();
 		userLog.setIdUsuario(usuario);
-//						userLog.setN_session_id(sesionExist.get().getId());
+//		userLog.setN_session_id(sesionExist.get().getId());
 		userLog.setDSistema(new Date());
 		userLog.setBitacora(estatus);
 		segLogUsuarioRepository.save(userLog);
@@ -155,6 +155,67 @@ public class UsuarioService {
 		return usuariosModulosStored;
 	}
 
+	public DTOResponse editarUsuario(DTOPayloadUsuario userDTO, int idUsuario, DTOResponse response, Authentication auth) {
+		UsuarioSecurityDTO usuarioVO = (UsuarioSecurityDTO) auth.getDetails();
+		if(usuarioVO==null) {
+			response.setMessage("No cuentas con permisos para realizar la actualización");
+			return response;
+		}
+		Optional<SegUsuarios> usuarioExist = SegUsuariosRepository.findById(idUsuario);
+		if (!usuarioExist.isPresent()) {
+			response.setMessage("El usuario que intentas editar no existe");
+			return response;
+		}
+		Optional<SegCatEstadoUsuario> statusUsuario = segCatEstadoUsuarioRepository
+				.findById(userDTO.getStatusCuenta());
+		if (!statusUsuario.isPresent()) {
+			response.setMessage("El estatus de la cuenta no existe");
+			return response;
+		}
+		
+		usuarioExist.get().setnIdEstadoUsuario(statusUsuario.get());
+		
+		//Validamos que existan los roles
+		List<SegRoles> rolesExistentes = new ArrayList<SegRoles>();
+		for (String codigo : userDTO.getCodigoRol()) {
+			Optional<SegRoles> rol = SegRolesRepository.findByEtiquetaRol(codigo);
+			if (!rol.isPresent()) {
+				response.setMessage("El Código de Rol " + codigo + " que intentas asociar no existe en el sistema");
+				return response;
+			}
+			rolesExistentes.add(rol.get());
+		}
+		
+		//Eliminamos los roles que actualmente tiene el usuario
+		List<SegRolesUsuarios> rolesUsuario = SegRolesUsuariosRepository.findByIdUsuario(usuarioExist.get());
+		for (SegRolesUsuarios usuarioRol : rolesUsuario) {
+			SegRolesUsuariosRepository.delete(usuarioRol);
+			// ALmacenamos en el log del usuario
+			storeLogUsuario(usuarioExist.get(),
+				"Se elimina el rol" + usuarioRol.getIdRol().getDescripcion() + " del usuario " + usuarioExist.get().getUsuario());
+
+		}
+		//Agregamos los nuevos roles
+		for (SegRoles rol : rolesExistentes) {
+			SegRolesUsuarios rolesUsuarios = new SegRolesUsuarios();
+			rolesUsuarios.setIdRol(rol);
+			rolesUsuarios.setIdUsuario(usuarioExist.get());
+			SegRolesUsuariosRepository.save(rolesUsuarios);
+
+			// ALmacenamos en el log del usuario
+			storeLogUsuario(usuarioExist.get(),
+					"Se asoció el rol" + rol.getDescripcion() + " al usuario " + usuarioExist.get().getUsuario());
+
+		}
+		userDTO.setIdUsuario(idUsuario);
+		userDTO.setEmail(usuarioExist.get().getEmail());
+		userDTO.setUsuario(usuarioExist.get().getUsuario());
+		response.setData(userDTO);
+		response.setMessage("Se ha editado el usuario satisfactoriamente");
+		
+		return response;
+	}
+	
 	public DTOResponse createUser(DTOPayloadUsuario userDTO, DTOResponse response) {
 
 		List<String> codigoRol = new ArrayList<String>();

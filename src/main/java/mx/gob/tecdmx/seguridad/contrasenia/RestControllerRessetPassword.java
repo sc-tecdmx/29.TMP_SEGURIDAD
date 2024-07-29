@@ -71,7 +71,7 @@ public class RestControllerRessetPassword {
 			response.setStatus("Success");
 			response.setMessage("La contraseña se ha actualizado satisfactoriamente");
 		} else {
-			response.setStatus("Failed");
+			response.setStatus("Fail");
 			response.setStatus("Token inválido o expirado.");
 		}
 		return ResponseEntity.ok().header(null).body(utils.objectToJson(response));
