@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -89,7 +90,7 @@ public class UsuarioService {
 		segLogUsuarioRepository.save(userLog);
 		return true;
 	}
-
+	
 	// Este método valida si el usuario existe para recuperarlo o para crearlo
 	public SegUsuarios retrieveOrCreateUser(DTOPayloadUsuario userDTO, SegCatEstadoUsuario statusUsuario) {
 
@@ -297,26 +298,48 @@ public class UsuarioService {
 
 	public DTOResponse getUsuarios(DTOResponse response, Authentication auth, int numeroPagina, int tamanoPagina) {
 		UsuarioSecurityDTO usuarioVO = (UsuarioSecurityDTO) auth.getDetails();
+		if(usuarioVO==null) {
+			response.setMessage("No cuentas con permisos para realizar esta acción");
+			response.setStatus("Fail");
+			return response;
+		}
+		Optional<SegModulos> sistema = segModulosRepository.findByDescModulo(usuarioVO.getSys());
+		
 		DTOUserInfo userInfo = null;
 		List<DTOUserInfo> usuariosInfo = new ArrayList<>();
 		Pageable pageable = PageRequest.of(numeroPagina, tamanoPagina);
+//		Pageable pageable = PageRequest.of(numeroPagina, tamanoPagina, Sort.by("nombre").ascending());
 		Page<SegUsuarios> usuariosPage = SegUsuariosRepository.findAll(pageable);
 		List<SegUsuarios> usuarios = usuariosPage.getContent();
+		List<SegUsuariosModulos> usuariosSys = new ArrayList<SegUsuariosModulos>();
 
 		for (SegUsuarios usuario : usuarios) {
+			//solo obtendrá info de los que son del mismo sistema
+			IDUsuariosModulos idUsuModul = new IDUsuariosModulos();
+			idUsuModul.setNIdUsuario(usuario.getnIdUsuario());
+			idUsuModul.setNIdModulo(sistema.get().getId());
+			Optional<SegUsuariosModulos> usuarioFinded = segUsuariosModulosRepository.findById(idUsuModul);
+			if(usuarioFinded.isPresent()) {
+				usuariosSys.add(usuarioFinded.get());
+			}
+		}
+		//recorre solo la lista de usuarios del sistema
+		for (SegUsuariosModulos usuarioSys : usuariosSys) {
+			Optional<SegUsuarios> usuario = SegUsuariosRepository.findById(usuarioSys.getNIdUsuario());
 			userInfo = new DTOUserInfo();
-			userInfo.setIdUsuario(usuario.getnIdUsuario());
-			userInfo.setUsuario(usuario.getUsuario());
-			userInfo.setEmail(usuario.getEmail());
+			userInfo.setIdUsuario(usuario.get().getnIdUsuario());
+			userInfo.setUsuario(usuario.get().getUsuario());
+			userInfo.setEmail(usuario.get().getEmail());
 
 			Optional<SegCatEstadoUsuario> idEstado = segCatEstadoUsuarioRepository
-					.findById(usuario.getnIdEstadoUsuario().getId());
+					.findById(usuario.get().getnIdEstadoUsuario().getId());
 			if (idEstado.isPresent()) {
 				userInfo.setStatusCuenta(idEstado.get().getDescripcion());
 			}
 
 			ResponseBodyMenu menu = new ResponseBodyMenu();
-			List<PerfilDTO> perfiles = menuService.getMenu(menu, usuario, usuarioVO.getSys());
+			
+			List<PerfilDTO> perfiles = menuService.getMenu(menu, usuario.get(), sistema.get().getCodigo());
 			userInfo.setPerfiles(perfiles);
 
 			usuariosInfo.add(userInfo);

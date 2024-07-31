@@ -100,12 +100,13 @@ public class ServiceMenu {
 						&& rolMod.getSegModulos().getNIdNivel().getDescNivel().equals("Aplicación")) {
 					acceso.setAplicacion(rolMod.getSegModulos().getDescModulo());
 					int idAplicacion = rolMod.getSegModulos().getId();
+					acceso.setIdAplicacion(idAplicacion);
 					fillMenu(rolesModulos, menu, idAplicacion);
 					acceso.setRol(usuarioRol.getIdRol().getDescripcion());
+					acceso.setIdRol(usuarioRol.getIdRol().getId());
 					acceso.setMenu(menu);
 				}
-				System.out.println(rolMod.getSegModulos().getDescModulo());
-				System.out.println(rolMod.getSegModulos().getNIdNivel().getDescNivel());
+				
 			}
 
 			PerfilDTO perfil = new PerfilDTO();
