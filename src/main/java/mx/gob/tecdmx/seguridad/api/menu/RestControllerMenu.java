@@ -36,10 +36,10 @@ public class RestControllerMenu {
 	@CrossOrigin()
 	@RequestMapping(method = RequestMethod.POST, path = "/create-modulo", produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<String> createModulo(@RequestBody PayloadMenu payload) {
+	public ResponseEntity<String> createModulo(@RequestBody PayloadMenu payload, Authentication auth) {
 		SeguridadUtils utils = new SeguridadUtils();
 		DTOResponse response = new DTOResponse();
-		menuService.createModulo(payload, response);
+		menuService.createModulo(payload, response, auth);
 		return ResponseEntity.ok().header(null).body(utils.objectToJson(response));
 	}
 	

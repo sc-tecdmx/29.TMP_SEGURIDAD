@@ -65,7 +65,6 @@ public class SeguridadApplication extends SpringBootServletInitializer {
                     .antMatchers(
                             "/api/v1/version",
                             "/api/v1/create-menu",
-                            "/api/v1/create-modulo",
                             "/api/v1/registrar-usuario-no-auth",
                             "/api/v1/login",
                             "/api/v1/email/solicitud-reset-password",

@@ -118,11 +118,12 @@ public class ServiceMenu {
 
 	public List<PerfilDTO> getMenu(Authentication auth) {
 		UsuarioSecurityDTO usuario = (UsuarioSecurityDTO) auth.getDetails();
+		Optional<SegModulos> sistema = SegModulosRepository.findByDescModulo(usuario.getSys());
 		Optional<SegUsuarios> credentials = SegUsuariosRepository.findByEmail(usuario.getEmail());
 		ResponseBodyMenu acceso = new ResponseBodyMenu();
 		List<PerfilDTO> perfiles = null;
 		if (credentials.isPresent()) {
-			perfiles = getMenu(acceso, credentials.get(), usuario.getSys());
+			perfiles = getMenu(acceso, credentials.get(), sistema.get().getCodigo());
 		}
 		return perfiles;
 	}
@@ -228,7 +229,14 @@ public class ServiceMenu {
 		return response;
 	}
 
-	public DTOResponse createModulo(PayloadMenu payload, DTOResponse response) {
+	public DTOResponse createModulo(PayloadMenu payload, DTOResponse response, Authentication auth) {
+		
+		UsuarioSecurityDTO usuarioVO = (UsuarioSecurityDTO) auth.getDetails();
+		if(usuarioVO==null) {
+			response.setMessage("No tienes permisos para crear un menú");
+			response.setStatus("Fail");
+			return response;
+		}
 		boolean hasNivel = validateNivelAndPermisos(payload);
 		
 		if (!hasNivel) {

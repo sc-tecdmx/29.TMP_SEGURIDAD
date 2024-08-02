@@ -80,10 +80,14 @@ public class ServiceLogin {
 
 		boolean coincide = bCryptPasswordEncoder.matches(payload.getPassword(), credentials.get().getsContrasenia());
 		if (coincide) {
+//			if(payload.getSys()==null) {
+//				payload.setSys("No Parent");
+//			}
 			Optional<SegModulos> moduloExist = SegModulosRepository.findByCodigo(payload.getSys());
-			if(moduloExist== null) {
+			if(!moduloExist.isPresent() && payload.getSys() != null) {
 				responseDto.setStatus("Fail");
 				responseDto.setMessage("Autenticación fallida, no fue posible iniciar sesión");
+				return responseDto;
 			}
 			Map<String, Object> claims = new HashMap<>();
 		    claims.put("iat", new Date());

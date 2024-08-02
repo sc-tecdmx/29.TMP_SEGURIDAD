@@ -44,7 +44,7 @@ public class RestControllerAdmin {
 	}
 	
 	@CrossOrigin()
-	@RequestMapping(method = RequestMethod.POST, path = "/editar-permisos/{idRol}", produces = "application/json")
+	@RequestMapping(method = RequestMethod.PUT, path = "/editar-permisos/{idRol}", produces = "application/json")
 	@ResponseBody
 	public DTOResponseAdmin editarPermisoByRol(@RequestBody ResponseBodyMenu payload, @PathVariable("idRol") int idRol, Authentication auth) {
 		DTOResponseAdmin response = new DTOResponseAdmin();
