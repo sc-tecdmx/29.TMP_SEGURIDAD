@@ -318,7 +318,7 @@ public class ServiceMenu {
 
 		newModulo = SegModulosRepository.save(modulo);
 		
-		response.setData(newModulo);
+		//response.setData(newModulo);
 		return newModulo;
 	}
 

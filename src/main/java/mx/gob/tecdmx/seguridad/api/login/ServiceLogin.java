@@ -80,11 +80,8 @@ public class ServiceLogin {
 
 		boolean coincide = bCryptPasswordEncoder.matches(payload.getPassword(), credentials.get().getsContrasenia());
 		if (coincide) {
-//			if(payload.getSys()==null) {
-//				payload.setSys("No Parent");
-//			}
 			Optional<SegModulos> moduloExist = SegModulosRepository.findByCodigo(payload.getSys());
-			if(!moduloExist.isPresent() && payload.getSys() != null) {
+			if(!moduloExist.isPresent()) {
 				responseDto.setStatus("Fail");
 				responseDto.setMessage("Autenticación fallida, no fue posible iniciar sesión");
 				return responseDto;
@@ -95,7 +92,7 @@ public class ServiceLogin {
 		    claims.put("sub", credentials.get().getEmail());
 		    claims.put("jti", lastSesionGuardada.getId());
 		    claims.put("exp", new Date(System.currentTimeMillis() + Constants.TOKEN_EXPIRATION_TIME));
-		    claims.put("sys", moduloExist.get().getDescModulo());
+		    claims.put("sys", moduloExist.isPresent() ? moduloExist.get().getDescModulo() : null);
 		    
 			String token = Jwts.builder()
 					

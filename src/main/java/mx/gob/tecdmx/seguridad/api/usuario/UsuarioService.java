@@ -232,6 +232,11 @@ public class UsuarioService {
 
 		// Validación Usuario Asignado al Sistema
 		Optional<SegModulos> modulo = segModulosRepository.findByCodigo(userDTO.getCodigoSistema());
+		if(!modulo.isPresent()) {
+			response.setMessage("El Sistema no existe");
+			response.setStatus("Fail");
+			return response;
+		}
 		if (validateUsuarioEstaAsignadoSistema(modulo.get(), usuario)) {
 			// El usuario ya ha sido asignado a ese sistema
 			response.setMessage("El usuario ya se encuentra registrado en el sistema: " + userDTO.getCodigoSistema());
