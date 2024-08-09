@@ -117,8 +117,12 @@ public class ServiceMenu {
 	}
 
 	public List<PerfilDTO> getMenu(Authentication auth) {
+		Optional<SegModulos> sistema= null;
 		UsuarioSecurityDTO usuario = (UsuarioSecurityDTO) auth.getDetails();
-		Optional<SegModulos> sistema = SegModulosRepository.findByDescModulo(usuario.getSys());
+		sistema = SegModulosRepository.findByDescModulo(usuario.getSys());
+		if(!sistema.isPresent()) {
+			sistema = SegModulosRepository.findByCodigo(usuario.getSys());
+		}
 		Optional<SegUsuarios> credentials = SegUsuariosRepository.findByEmail(usuario.getEmail());
 		ResponseBodyMenu acceso = new ResponseBodyMenu();
 		List<PerfilDTO> perfiles = null;
